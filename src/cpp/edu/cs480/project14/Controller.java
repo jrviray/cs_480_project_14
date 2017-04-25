@@ -19,6 +19,7 @@ import javafx.scene.control.Label;
 import javafx.scene.control.Separator;
 import javafx.scene.layout.*;
 import javafx.scene.shape.Line;
+import javafx.scene.shape.Polygon;
 import javafx.scene.text.Font;
 import javafx.stage.Stage;
 
@@ -38,12 +39,12 @@ public class Controller extends Application {
     private Scene mainScene;
     private double mainPaneWidth = 1600;
     private double mainPaneHeight = 800;
-    private Pane edgePane;
-    private Pane vertexPane;
+    private Pane canvas;
     private Button add,delete,operate,save,load;
     private ChoiceBox algChoice;
     private int algorithmType;
     private Label outputLabel;
+    private Animator animator;
 
     public static void main(String[] args) {
         launch(args);
@@ -63,13 +64,10 @@ public class Controller extends Application {
         BorderPane rootPane = new BorderPane();
         mainScene = new Scene(rootPane);
 
-        edgePane = new Pane();
-        vertexPane = new Pane();
-        StackPane stackPane = new StackPane();
-        stackPane.setPrefSize(mainPaneWidth,mainPaneHeight);
-        stackPane.getChildren().addAll(edgePane,vertexPane);
-        vertexPane.toFront();
-        rootPane.setCenter(stackPane);
+        canvas = new Pane();
+
+        canvas.setPrefSize(mainPaneWidth,mainPaneHeight);
+        rootPane.setCenter(canvas);
 
 
         HBox leftPane = new HBox(20f);
@@ -106,7 +104,7 @@ public class Controller extends Application {
         rightPane.getChildren().addAll(save,load);
 
         outputLabel = new Label("Here is output message");
-        outputLabel.setPadding(new Insets(0,0,20f,20f));
+        outputLabel.setPadding(new Insets(0,0,5f,20f));
         BorderPane topPane = new BorderPane();
         topPane.setLeft(leftPane);
         topPane.setRight(rightPane);
@@ -117,8 +115,11 @@ public class Controller extends Application {
         rootPane.setBottom(copyrightLabel);
         BorderPane.setAlignment(copyrightLabel,Pos.CENTER_RIGHT);
 
+        animator = new Animator(canvas);
+
 
 
     }
+
 
 }

@@ -27,8 +27,9 @@ public class Vertex extends Group{
 
     private int ID;
 
-    public Vertex(String context)
+    public Vertex(int ID,String context)
     {
+        this.ID= ID;
         circle = new Circle(RADIUS);
         circle.setFill(new Color(1, 0.3373, 0.3098, 1));
         circle.setStroke(NORMAL_STROKE);
@@ -42,27 +43,7 @@ public class Vertex extends Group{
         text.translateXProperty().bind(getXProperty().subtract(W/2));
         text.translateYProperty().bind(getYProperty().add(H/4));
         getChildren().addAll(circle,text);
-        setOnMousePressed(new EventHandler<MouseEvent>(){
-            @Override
-            public void handle(MouseEvent e)
-            {
-                offsetX = e.getSceneX() - getX();
-                offsetY = e.getSceneY() - getY();
-            }
-        });
 
-        setOnMouseDragged(new EventHandler<MouseEvent>() {
-            @Override
-            public void handle(MouseEvent e) {
-                double newX = e.getSceneX() - offsetX;
-                double newY = e.getSceneY() - offsetY;
-                if(newY>RADIUS)
-                    setY(newY);
-                if(newX>RADIUS)
-                    setX(newX);
-
-            }
-        });
     }
 
     public DoubleProperty getXProperty()

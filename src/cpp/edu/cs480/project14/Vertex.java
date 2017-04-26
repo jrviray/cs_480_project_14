@@ -22,9 +22,6 @@ public class Vertex extends Group{
     private Circle circle;
     private Text text;
 
-    private double offsetX;
-    private double offsetY;
-
     private int ID;
 
     public Vertex(int ID,String context)
@@ -75,6 +72,8 @@ public class Vertex extends Group{
     {
         circle.setTranslateY(y);
     }
+
+
 
 
 

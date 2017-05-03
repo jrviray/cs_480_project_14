@@ -3,15 +3,25 @@ package cpp.edu.cs480.project14; /**
  */
 
 import javafx.application.Application;
+import javafx.beans.binding.DoubleBinding;
+import javafx.beans.binding.ObjectBinding;
+import javafx.beans.property.SimpleDoubleProperty;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.geometry.Insets;
+import javafx.geometry.Point3D;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
-import javafx.scene.control.*;
+import javafx.scene.control.Button;
+import javafx.scene.control.ChoiceBox;
+import javafx.scene.control.Label;
+import javafx.scene.control.Separator;
 import javafx.scene.layout.*;
 import javafx.scene.shape.Line;
+import javafx.scene.shape.Polygon;
+import javafx.scene.text.Font;
 import javafx.stage.Stage;
-import java.util.Optional;
 
 public class Controller extends Application {
 
@@ -31,12 +41,10 @@ public class Controller extends Application {
     private double mainPaneHeight = 800;
     private Pane canvas;
     private Button add,delete,operate,save,load;
-    private ToggleButton edge;
     private ChoiceBox algChoice;
     private int algorithmType;
     private Label outputLabel;
     private Animator animator;
-
 
     public static void main(String[] args) {
         launch(args);
@@ -54,7 +62,6 @@ public class Controller extends Application {
     private void initialize()
     {
         BorderPane rootPane = new BorderPane();
-        Line line = new Line();
         mainScene = new Scene(rootPane);
 
         canvas = new Pane();
@@ -68,24 +75,25 @@ public class Controller extends Application {
         leftPane.setAlignment(Pos.BASELINE_LEFT);
 
         add = new Button("add vertex");
-        add.setOnMouseClicked(event -> {addNewVertex();});
         delete = new Button("delete vertex");
-        edge = new ToggleButton("Draw Edge");
-        edge.setOnAction(event -> drawEdge());
         algChoice = new ChoiceBox(FXCollections.observableArrayList("breadth-first search",
                 "depth-first search",new Separator(),"pre-order traversal","in-order traversal","post-order traversal",
                 new Separator(),"greedy shortest path","Disjkstra's shortest path","minimum spanning tree"));
         algChoice.getSelectionModel().selectFirst();
         algorithmType = BREADTH_FIRST_SEARCH;
 
-        algChoice.getSelectionModel().selectedIndexProperty().addListener((observable, oldValue, newValue) -> {
-            algorithmType = newValue.intValue();
-            System.out.println(algorithmType);
+        algChoice.getSelectionModel().selectedIndexProperty().addListener(new ChangeListener<Number>() {
+
+            @Override
+            public void changed(ObservableValue<? extends Number> observable, Number oldValue, Number newValue) {
+                algorithmType = newValue.intValue();
+                System.out.println(algorithmType);
+            }
         });
 
 
         operate = new Button("operate algorithm");
-        leftPane.getChildren().addAll(add,delete,edge,algChoice,operate);
+        leftPane.getChildren().addAll(add,delete,algChoice,operate);
 
 
         HBox rightPane = new HBox(20f);
@@ -108,29 +116,9 @@ public class Controller extends Application {
         BorderPane.setAlignment(copyrightLabel,Pos.CENTER_RIGHT);
 
         animator = new Animator(canvas);
-       
-        animator.createVertex("help");
-        animator.createVertex("me");
-        
-        
-    }
-    
-    private void drawEdge() {
-    	animator.edge();
-    }
 
-    private void addNewVertex()
-    {
-        TextInputDialog inputDialog = new TextInputDialog();
-        inputDialog.setTitle("Add New Vertex");
-        inputDialog.setContentText("Enter the name of the new vertex:");
-        inputDialog.setHeaderText(null);
 
-        Optional<String> name = inputDialog.showAndWait();
-        if(name.isPresent())
-        {
-            animator.createVertex(name.get());
-        }
+
     }
 
 

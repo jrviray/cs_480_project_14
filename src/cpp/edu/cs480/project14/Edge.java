@@ -1,12 +1,16 @@
 package cpp.edu.cs480.project14;
 
 import javafx.beans.binding.DoubleBinding;
+import javafx.beans.binding.ObjectBinding;
+import javafx.geometry.Point3D;
 import javafx.scene.Group;
 import javafx.scene.shape.Line;
 import javafx.scene.shape.Polygon;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 import javafx.scene.transform.Rotate;
+
+import java.io.InputStream;
 
 /**
  * Created by wxy03 on 4/23/2017.
@@ -21,11 +25,8 @@ public class Edge extends Group{
 
     private Text weightText;
 
-    private double weight;
-
-    public Edge(Vertex source,Vertex destination, double weight)
+    public Edge(Vertex source,Vertex destination, int weight)
     {
-        this.weight = weight;
         arrow = new Polygon();
 
         DoubleBinding lengthBinding = new DoubleBinding() {
@@ -93,7 +94,7 @@ public class Edge extends Group{
         edgeLine.endYProperty().bind(source.getYProperty());
         edgeLine.endXProperty().bind(source.getXProperty().add(Vertex.RADIUS).add(lengthBinding));
 
-        weightText = new Text(Double.toString(weight));
+        weightText = new Text(Integer.toString(weight));
         weightText.setFont(Font.font(15));
         weightText.translateXProperty().bind(source.getXProperty().add(lengthBinding.divide(2)));
         weightText.translateYProperty().bind(source.getYProperty().subtract(5));
@@ -105,11 +106,9 @@ public class Edge extends Group{
         this.getTransforms().add(rotate);
         getChildren().addAll(edgeLine,arrow,weightText);
 
+
     }
 
-public double getWeight()
-{
-    return weight;
-}
+
     
 }

@@ -86,6 +86,10 @@ public class Vertex extends Group{
     {
         return text.getText();
     }
+    
+    public double getRadius() {
+    	return RADIUS;
+    }
 
 
 

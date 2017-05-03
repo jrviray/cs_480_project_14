@@ -9,6 +9,7 @@ import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.layout.*;
+import javafx.scene.shape.Line;
 import javafx.stage.Stage;
 import java.util.Optional;
 
@@ -30,6 +31,7 @@ public class Controller extends Application {
     private double mainPaneHeight = 800;
     private Pane canvas;
     private Button add,delete,operate,save,load;
+    private ToggleButton edge;
     private ChoiceBox algChoice;
     private int algorithmType;
     private Label outputLabel;
@@ -52,6 +54,7 @@ public class Controller extends Application {
     private void initialize()
     {
         BorderPane rootPane = new BorderPane();
+        Line line = new Line();
         mainScene = new Scene(rootPane);
 
         canvas = new Pane();
@@ -67,6 +70,8 @@ public class Controller extends Application {
         add = new Button("add vertex");
         add.setOnMouseClicked(event -> {addNewVertex();});
         delete = new Button("delete vertex");
+        edge = new ToggleButton("Draw Edge");
+        edge.setOnAction(event -> drawEdge());
         algChoice = new ChoiceBox(FXCollections.observableArrayList("breadth-first search",
                 "depth-first search",new Separator(),"pre-order traversal","in-order traversal","post-order traversal",
                 new Separator(),"greedy shortest path","Disjkstra's shortest path","minimum spanning tree"));
@@ -80,7 +85,7 @@ public class Controller extends Application {
 
 
         operate = new Button("operate algorithm");
-        leftPane.getChildren().addAll(add,delete,algChoice,operate);
+        leftPane.getChildren().addAll(add,delete,edge,algChoice,operate);
 
 
         HBox rightPane = new HBox(20f);
@@ -103,6 +108,15 @@ public class Controller extends Application {
         BorderPane.setAlignment(copyrightLabel,Pos.CENTER_RIGHT);
 
         animator = new Animator(canvas);
+       
+        animator.createVertex("help");
+        animator.createVertex("me");
+        
+        
+    }
+    
+    private void drawEdge() {
+    	animator.edge();
     }
 
     private void addNewVertex()

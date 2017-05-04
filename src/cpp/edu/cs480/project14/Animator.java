@@ -124,9 +124,11 @@ public class Animator {
             if (isDragging != true) {
                 if (sourceChoice == -1) {
                     sourceChoice = vertex.getID();
+                    vertex.highLightCircle();
                     outputControl_select_source();
                 } else if (sourceChoice != -1 && destChoice == -1) {
                     if (vertex.getID() != sourceChoice) {
+                        vertex.highLightCircle();
                         destChoice = vertex.getID();
                         outputControl_select_dest();
                     }
@@ -202,7 +204,7 @@ public class Animator {
                 confirmation.setTitle("Confirmation");
                 confirmation.setHeaderText("");
                 confirmation.setContentText("Are you sure to delete vertex "+deleteVertex.getContent()+"?"+
-                "\nNote: all the edges related to this vertex will be deleted!:");
+                "\nNote: all the edges related to this vertex will be deleted!");
                 Optional<ButtonType> result=confirmation.showAndWait();
                 if(result.get()==ButtonType.OK)
                 {
@@ -332,6 +334,15 @@ public class Animator {
     private void cancelSelection()
     {
         outputLabel.setText("");
+        if(sourceChoice!=-1) {
+            if(vertexTable[sourceChoice]!=null)
+            vertexTable[sourceChoice].unhighLightCircle();
+        }
+        if(destChoice!=-1) {
+            if(vertexTable[destChoice]!=null)
+            vertexTable[destChoice].unhighLightCircle();
+        }
+
         sourceChoice = -1;
         destChoice = -1;
         cancelButton.setVisible(false);

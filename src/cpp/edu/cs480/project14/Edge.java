@@ -19,7 +19,6 @@ public class Edge extends Group{
     private Text weightText;
     private double weight;
     public final static Color HIGHLIGHT = new Color(0.2118, 0.6392, 0.2588, 1);
-    public final static Color HIGHLIGHT_2 = new Color(0.1725, 0.4627, 0.6275, 1);
 
     public Edge(Vertex source,Vertex destination, double weight)
     {
@@ -105,15 +104,23 @@ public class Edge extends Group{
 
     }
 
-public double getWeight()
+    public double getWeight()
 {
     return weight;
 }
 
-// highlight edge
-private void highlightEdge(){
-    edgeLine.setStroke(HIGHLIGHT);
-    edgeLine.setStrokeWidth(3f);
+    // highlight edge
+    public void highLightEdge(){
+
+        edgeLine.setStroke(HIGHLIGHT);
+        edgeLine.setStrokeWidth(3f);
+        arrow.setFill(HIGHLIGHT);
+}
+
+    public void unhighLightEdge() {
+        edgeLine.setStroke(Color.BLACK);
+        edgeLine.setStrokeWidth(1f);
+        arrow.setFill(Color.BLACK);
 }
     
 }

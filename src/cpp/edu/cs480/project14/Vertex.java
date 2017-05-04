@@ -16,6 +16,7 @@ public class Vertex extends Group{
 
     public  final static Color NORMAL_STROKE = new Color(0.0745, 0.3843, 0.8039, 1);
     public final static Color HIGHLIGHT = new Color(0.2118, 0.6392, 0.2588, 1);
+    public final static Color HIGHLIGHT_2 = new Color(0.1725, 0.4627, 0.6275, 1);
     public static double RADIUS=25f;
     private Circle circle;
     private Text text;
@@ -55,23 +56,12 @@ public class Vertex extends Group{
     public int getID() { return ID; }
     public String getContent() { return text.getText(); }
 
-    // create highlight circle
-    private Circle createHighlightCircle()
-    {
-        Circle highlightCircle = new Circle(circle.getRadius());
-        highlightCircle.setFill(new Color(0,0,0,0));
-        highlightCircle.setStroke(this.HIGHLIGHT);
-        highlightCircle.setStrokeType(StrokeType.OUTSIDE);
-        highlightCircle.setStrokeWidth(5);
-        return highlightCircle;
+    // highlight circle
+    private void highLightCircle(){
+        circle.setStroke(HIGHLIGHT);
+        circle.setStrokeWidth(3f);
     }
 
-    // paste to canvas
-    private Circle highLight(){
-        this.setTranslateX(this.getX());
-        this.setTranslateY(this.getY());
-        return circle;
-    }
 
 
 

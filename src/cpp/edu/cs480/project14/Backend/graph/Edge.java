@@ -1,6 +1,6 @@
 //System.out. LLC
 //
-package graph;
+package cpp.edu.cs480.project14.Backend.graph;
 public class Edge implements Comparable<Edge> {
 	protected int u,v;
 	protected boolean directed;

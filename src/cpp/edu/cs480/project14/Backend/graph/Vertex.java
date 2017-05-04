@@ -15,7 +15,7 @@
  * </ul>
  *
  */
-package graph;
+package cpp.edu.cs480.project14.Backend.graph;
 public class Vertex {
 	protected int index;
 	protected boolean marked;

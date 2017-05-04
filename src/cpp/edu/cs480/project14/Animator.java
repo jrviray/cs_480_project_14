@@ -133,4 +133,5 @@ public class Animator {
     {
         canvas.getChildren().addAll(elements);
     }
+
 }

@@ -5,6 +5,7 @@ import javafx.scene.Cursor;
 import javafx.scene.Group;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
+import javafx.scene.shape.StrokeType;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 
@@ -14,12 +15,10 @@ import javafx.scene.text.Text;
 public class Vertex extends Group{
 
     public  final static Color NORMAL_STROKE = new Color(0.0745, 0.3843, 0.8039, 1);
-
+    public final static Color HIGHLIGHT = new Color(0.2118, 0.6392, 0.2588, 1);
     public static double RADIUS=25f;
-
     private Circle circle;
     private Text text;
-
     private int ID;
 
     public Vertex(int ID,String content)
@@ -47,44 +46,31 @@ public class Vertex extends Group{
         getChildren().addAll(circle,text);
     }
 
-    public DoubleProperty getXProperty()
+    public DoubleProperty getXProperty() { return circle.translateXProperty(); }
+    public DoubleProperty getYProperty() { return circle.translateYProperty(); }
+    public double getX() { return circle.getTranslateX(); }
+    public double getY() { return circle.getTranslateY(); }
+    public void setX(double x) { circle.setTranslateX(x); }
+    public void setY(double y) { circle.setTranslateY(y); }
+    public int getID() { return ID; }
+    public String getContent() { return text.getText(); }
+
+    // create highlight circle
+    private Circle createHighlightCircle()
     {
-        return circle.translateXProperty();
+        Circle highlightCircle = new Circle(circle.getRadius());
+        highlightCircle.setFill(new Color(0,0,0,0));
+        highlightCircle.setStroke(this.HIGHLIGHT);
+        highlightCircle.setStrokeType(StrokeType.OUTSIDE);
+        highlightCircle.setStrokeWidth(5);
+        return highlightCircle;
     }
 
-    public DoubleProperty getYProperty()
-    {
-        return circle.translateYProperty();
-    }
-
-    public double getX()
-    {
-        return circle.getTranslateX();
-    }
-
-    public double getY()
-    {
-        return circle.getTranslateY();
-    }
-
-    public void setX(double x)
-    {
-        circle.setTranslateX(x);
-    }
-
-    public void setY(double y)
-    {
-        circle.setTranslateY(y);
-    }
-
-    public int getID()
-    {
-        return ID;
-    }
-
-    public String getContent()
-    {
-        return text.getText();
+    // paste to canvas
+    private Circle highLight(){
+        this.setTranslateX(this.getX());
+        this.setTranslateY(this.getY());
+        return circle;
     }
 
 

@@ -2,6 +2,7 @@ package cpp.edu.cs480.project14;
 
 import javafx.beans.binding.DoubleBinding;
 import javafx.scene.Group;
+import javafx.scene.paint.Color;
 import javafx.scene.shape.Line;
 import javafx.scene.shape.Polygon;
 import javafx.scene.text.Font;
@@ -14,14 +15,11 @@ import javafx.scene.transform.Rotate;
 public class Edge extends Group{
 
     private Line edgeLine;
-
-
     private Polygon arrow;
-
-
     private Text weightText;
-
     private double weight;
+    public final static Color HIGHLIGHT = new Color(0.2118, 0.6392, 0.2588, 1);
+    public final static Color HIGHLIGHT_2 = new Color(0.1725, 0.4627, 0.6275, 1);
 
     public Edge(Vertex source,Vertex destination, double weight)
     {
@@ -110,6 +108,12 @@ public class Edge extends Group{
 public double getWeight()
 {
     return weight;
+}
+
+// highlight edge
+private void highlightEdge(){
+    edgeLine.setStroke(HIGHLIGHT);
+    edgeLine.setStrokeWidth(3f);
 }
     
 }

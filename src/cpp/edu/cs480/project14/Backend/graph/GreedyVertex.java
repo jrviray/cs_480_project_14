@@ -9,7 +9,7 @@
  *	 <li> fringe: true if a fringe vertex
  * </ul>
  */
-package graph;
+package cpp.edu.cs480.project14.Backend.graph;
 public class GreedyVertex extends Vertex implements Comparable<GreedyVertex>{
 	private double cost;
 	private boolean fringe;

@@ -10,7 +10,7 @@
  * algorithms to be implemented in derived classes.
  * Uses custom priority queue with "promote" method to recognize decreased vertex cost.
  */
-package graph;
+package cpp.edu.cs480.project14.Backend.graph;
 import java.util.ArrayList;
 public class GreedyGraph extends Graph {
 	private final boolean DEBUG=false;

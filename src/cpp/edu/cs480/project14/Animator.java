@@ -290,7 +290,6 @@ public class Animator {
                 }
                 catch (NumberFormatException | NullPointerException e)
                 {
-                   
                     alert.setTitle("Error");
                     alert.setHeaderText("");
                     alert.setContentText("Invalid input!");
@@ -333,7 +332,7 @@ public class Animator {
         try (PrintWriter writer = new PrintWriter("graph.txt", "UTF-8")) {
         	
         	
-        	writer.println(vertexTable.length + " " + edgeCount()  + " " + (isDirected ? "directed" : "undirected"));
+        	writer.println(vertexTable.length + " " + edgeCount()  + " directed");
 
             for(int i=0;i<edgeTable.length;i++)
             {

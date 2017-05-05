@@ -1,16 +1,13 @@
 package cpp.edu.cs480.project14;
 
 import javafx.beans.binding.DoubleBinding;
-import javafx.beans.binding.ObjectBinding;
-import javafx.geometry.Point3D;
 import javafx.scene.Group;
+import javafx.scene.paint.Color;
 import javafx.scene.shape.Line;
 import javafx.scene.shape.Polygon;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 import javafx.scene.transform.Rotate;
-
-import java.io.InputStream;
 
 /**
  * Created by wxy03 on 4/23/2017.
@@ -18,15 +15,14 @@ import java.io.InputStream;
 public class Edge extends Group{
 
     private Line edgeLine;
-
-
     private Polygon arrow;
-
-
     private Text weightText;
+    private double weight;
+    public final static Color HIGHLIGHT = new Color(0.2118, 0.6392, 0.2588, 1);
 
-    public Edge(Vertex source,Vertex destination, int weight)
+    public Edge(Vertex source,Vertex destination, double weight)
     {
+        this.weight = weight;
         arrow = new Polygon();
 
         DoubleBinding lengthBinding = new DoubleBinding() {
@@ -78,9 +74,12 @@ public class Edge extends Group{
                 else
                 {
                     double angle = Math.toDegrees(Math.atan(deltaY/deltaX));
-                    if(sourceX<destX)
+                    if(sourceX<destX) {
+                        weightText.setRotate(0);
                         return angle;
+                    }
                     else {
+                        weightText.setRotate(180);
                         return angle + 180;
                     }
                 }
@@ -94,7 +93,7 @@ public class Edge extends Group{
         edgeLine.endYProperty().bind(source.getYProperty());
         edgeLine.endXProperty().bind(source.getXProperty().add(Vertex.RADIUS).add(lengthBinding));
 
-        weightText = new Text(Integer.toString(weight));
+        weightText = new Text(Double.toString(weight));
         weightText.setFont(Font.font(15));
         weightText.translateXProperty().bind(source.getXProperty().add(lengthBinding.divide(2)));
         weightText.translateYProperty().bind(source.getYProperty().subtract(5));
@@ -106,9 +105,25 @@ public class Edge extends Group{
         this.getTransforms().add(rotate);
         getChildren().addAll(edgeLine,arrow,weightText);
 
-
     }
 
+    public double getWeight()
+{
+    return weight;
+}
 
+    // highlight edge
+    public void highLightEdge(){
+
+        edgeLine.setStroke(HIGHLIGHT);
+        edgeLine.setStrokeWidth(3f);
+        arrow.setFill(HIGHLIGHT);
+}
+
+    public void unhighLightEdge() {
+        edgeLine.setStroke(Color.BLACK);
+        edgeLine.setStrokeWidth(1f);
+        arrow.setFill(Color.BLACK);
+}
     
 }

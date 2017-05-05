@@ -10,12 +10,12 @@
  * algorithms to be implemented in derived classes.
  * Uses custom priority queue with "promote" method to recognize decreased vertex cost.
  */
-package graph;
+package cpp.edu.cs480.project14.Backend.graph;
 import java.util.ArrayList;
 public class GreedyGraph extends Graph {
 	private final boolean DEBUG=false;
 	private GreedyPriorityQueue q;
-    private GreedyPriorityQueue q2;
+	private GreedyPriorityQueue q2;
 	private ArrayList<Integer> dfsPath;
 	private ArrayList<Integer> bfsPath;
 
@@ -34,7 +34,6 @@ public class GreedyGraph extends Graph {
 		for (int i=0; i<order; i++) {
 			vertices[i]=new GreedyVertex(i);
 		}
-        q2 = new GreedyPriorityQueue();
 	}
 	
 /**
@@ -49,14 +48,10 @@ public class GreedyGraph extends Graph {
  *	Greedy method using priority queue for vertex costs
  *	@param u vertex being visited
  */
-	public GreedyPriorityQueue getBfs()
-    {return q2;}
-    public void greedy(int u) {
+	public void greedy(int u) {
 		setCost(u,0.0);
 		q.add(getVertex(u));
-        q2.add(getVertex(u));
 		while (q.size()>0) {
-            System.out.println(q);
 			int v=q.poll().getIndex();
 			if (DEBUG) System.out.println("GreedyGraph:visit="+v);
 			markVertex(v);
@@ -75,9 +70,29 @@ public class GreedyGraph extends Graph {
 		} // end while
 		
 	}  // end greedy
-	
-	
-
+	public void bfs(int u) {
+		unmarkAll();
+		setCost(u,0.0);
+		q2.add(getVertex(u));
+		bfsPath.add(u);
+		while (q2.size()>0) {
+			int v=q2.poll().getIndex();
+			markVertex(v);
+			for (int w:getNeighbors(v)) {
+				if (!vertexMarked(w)) {
+					if (isFringe(w)) {
+						bfsPath.add(w);
+						if (newCost(v,w)<costOf(w)) {
+							modifyFringe(v, w);
+						}
+					}
+					else addFringe(v,w);
+				}
+			}
+		}
+	}
+	public ArrayList<Integer> getBfsPath()
+	{return bfsPath;}
 /**
  * Override this method to define formula used to compute new cost of vertex being processed. 
  * Formula depends on problem being solved.
@@ -136,7 +151,6 @@ public class GreedyGraph extends Graph {
 		vertex.setParent(v);
 		vertex.setCost(cost);
 		q.add(vertex);
-        q2.add(vertex);
 		if (DEBUG) System.out.println(q);
 	}
 
@@ -155,7 +169,6 @@ public class GreedyGraph extends Graph {
 		vertex.setParent(v);
 		vertex.setCost(cost);
 		q.promote(vertex);
-        q2.promote(vertex);
 		if (DEBUG) System.out.println(q);
 	}
 }	

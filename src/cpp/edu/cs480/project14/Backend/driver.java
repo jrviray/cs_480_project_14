@@ -1,11 +1,9 @@
-import graph.*;
+package cpp.edu.cs480.project14.Backend;
+import cpp.edu.cs480.project14.Backend.graph.*;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Stack;
-import java.util.*;
 import java.io.*;
 import java.lang.Character;
-import javafx.util.Pair;
 //Tsend-Ayush Batbileg
 //CS241
 //Project 4 driver file
@@ -26,16 +24,20 @@ public class driver {
             dfs(args[0]);
         }
     }
+    public static void bfs(String str) throws IOException
+    {
+        GreedyGraph g = new GreedyGraph(str);
+        g.bfs(0);
+        ArrayList<Integer> list = g.getBfsPath();
+        System.out.println(list);
+    }
 
     public static void dfs(String str) throws IOException
     {
         DfsGraph d = new DfsGraph(str);
-        //d.dfs(0);
-        //ArrayList<Integer> path = d.getPath();
-        //System.out.println("DFS path: " + path);
-        d.dfs2(0);
-        Stack<Integer> stack = d.getStack();
-        System.out.println(stack);
+        d.dfs(0);
+        ArrayList<Integer> path = d.getPath();
+        System.out.println("DFS path: " + path);
     }
     //This program follows the sample output provided
     //greedy(int) is a implementation of Dijkstras's algorithm
@@ -47,24 +49,15 @@ public class driver {
         System.out.println("MPT edges");
         Edge[] e = m.getEdges();
         double mptCost = 0.0;
-        @SuppressWarnings("unchecked")
-        Pair<Integer, Integer>[] MSP = new Pair[e.length];
         for(int i = 0; i < e.length; i++)
         {
             if(e[i].isSelected())
             {
-                MSP[i] = new Pair<Integer, Integer>(e[i].getU(), e[i].getV());
                 System.out.println(e[i]);
                 mptCost += m.weightOf(e[i]);
             }
         }
-        for(int i= 0; i < MSP.length; i++)
-        {
-            System.out.println(MSP[i].getKey() + " " + MSP[i].getValue());
-        }
         System.out.println(str + " MST cost=" + mptCost);
-        GreedyPriorityQueue q = m.getBfs();
-        System.out.println(q);
         return mptCost;
 
     }

@@ -1,6 +1,6 @@
 //System.out. LLC
 //
-package graph;
+package cpp.edu.cs480.project14.Backend.graph;
 public class Edge implements Comparable<Edge> {
 	protected int u,v;
 	protected boolean directed;
@@ -111,14 +111,6 @@ public class Edge implements Comparable<Edge> {
 		if (this.u==that.u) return this.v-that.v;
 		return this.u-that.u;
 	}
-    public int getV()
-    {
-        return v;
-    }
-    public int getU()
-    {
-        return u;
-    }
 	
 /**
  *  Convert edge into string for printing

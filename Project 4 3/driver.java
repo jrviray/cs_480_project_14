@@ -38,14 +38,20 @@ public class driver
         System.out.println("MPT edges");
         Edge[] e = m.getEdges();
         double mptCost = 0.0;
+        String[] s = new String[e.length];
         for(int i = 0; i < e.length; i++)
         {
             if(e[i].isSelected())
             {
                 System.out.println(e[i]);
+                if (e[i] != null)
+                s[i] = "" + e[i].getU() + "->" + e[i].getV();
                 mptCost += m.weightOf(e[i]);
             }
         }
+        for(int i =)
+        for(int i = 0; i < s.length; i++)
+            System.out.println(s[i]);
         System.out.println(str + " MST cost=" + mptCost);
         
     }

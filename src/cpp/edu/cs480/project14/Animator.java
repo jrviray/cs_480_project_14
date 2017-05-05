@@ -321,13 +321,13 @@ public class Animator {
 
     private void outputControl_select_source()
     {
-        outputLabel.setText("You selected "+vertexTable[sourceChoice].getContent()+ " as source.");
+        outputLabel.setText("You selected "+vertexTable[sourceChoice].getContent()+ " as source. Select the destination.");
         cancelButton.setVisible(true);
     }
 
     private void outputControl_select_dest()
     {
-        outputLabel.setText("You selected "+vertexTable[sourceChoice].getContent()+ " as source and "+vertexTable[destChoice].getContent() + " as destination.");
+        outputLabel.setText("You selected "+vertexTable[sourceChoice].getContent()+ " as source and "+vertexTable[destChoice].getContent() + " as destination. Click again to confirm");
         cancelButton.setVisible(true);
     }
 

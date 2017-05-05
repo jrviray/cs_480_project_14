@@ -495,6 +495,7 @@ public class Animator {
     private void redrawGraph()
     {
         canvas.getChildren().clear();
+        cancelSelection();
         for(int i=0;i<vertexTable.length;i++)
         {
             if(vertexTable[i]!=null) {
@@ -506,8 +507,10 @@ public class Animator {
         {
             for(int j=0;j<vertexTable.length;j++)
             {
-                if(edgeTable[i][j]!=null)
+                if(edgeTable[i][j]!=null) {
                     drawOnCanvas(edgeTable[i][j]);
+                    edgeTable[i][j].toBack();
+                }
             }
         }
     }

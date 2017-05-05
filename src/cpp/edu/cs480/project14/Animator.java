@@ -36,6 +36,8 @@ public class Animator {
     private int sourceChoice;
 
     private int destChoice;
+    
+    private boolean isDirected;
 
 
     /**
@@ -258,7 +260,7 @@ public class Animator {
         inputDialog.setResultConverter(dialogButton->{
             if(dialogButton == ButtonType.OK)
             {
-                Boolean isDirected = directedChoice.getValue().equals("directed edge")? true: false;
+                isDirected = directedChoice.getValue().equals("directed edge")? true: false;
 
                 try {
                     Double weight_result = Double.parseDouble(weight.getText());
@@ -292,17 +294,22 @@ public class Animator {
         return result.isPresent()?result.get():null;
     }
     
+    private boolean isDirected() {
+ 
+    }
     
     private int edgeCount() {
     	int edges = 0;
     	
     	for (int i  = 0; i < edgeTable.length; i++) {
     		for (int j = 0; j <edgeTable.length; j++) {
-    			//if edgeTable
+    			if (edgeTable[i][j] != null) {
+    				edges++;
+    			}
     		}
     	}
     	
-    	return 0;
+    	return edges;
     	
     }
 
@@ -315,7 +322,7 @@ public class Animator {
         try (PrintWriter writer = new PrintWriter("graph.txt", "UTF-8")) {
         	
         	
-        	//writer.println(vertexTable.length + " " + 
+        	writer.println(vertexTable.length + " " + edgeCount()  + " " + (isDirected ? "directed" : "undirected"));
 
             for(int i=0;i<edgeTable.length;i++)
             {
@@ -323,10 +330,12 @@ public class Animator {
                 {
                     if(edgeTable[i][j] !=null)
                     {
-                        //write
+                        writer.println(i  + " " + j + " " + edgeTable[i][j]);
                     }
                 }
             }
+            
+            
 
         }
         catch (FileNotFoundException e)
@@ -337,6 +346,8 @@ public class Animator {
         {
             e.printStackTrace();
         }
+        
+       
     }
 
     private void outputControl_no_source()

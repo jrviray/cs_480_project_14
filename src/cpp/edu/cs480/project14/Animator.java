@@ -472,8 +472,10 @@ public class Animator {
         {
             for(int j=0;j<vertexTable.length;j++)
             {
-                if(edgeTable[i][j]!=null)
+                if(edgeTable[i][j]!=null) {
                     drawOnCanvas(edgeTable[i][j]);
+                    edgeTable[i][j].toBack();
+                }
             }
         }
     }

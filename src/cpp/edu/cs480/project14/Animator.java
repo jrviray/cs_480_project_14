@@ -307,9 +307,7 @@ public class Animator {
         return result.isPresent()?result.get():null;
     }
     
-    private boolean isDirected() {
- 
-    }
+
     
     private int edgeCount() {
     	int edges = 0;

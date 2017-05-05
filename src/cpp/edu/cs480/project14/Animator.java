@@ -460,6 +460,7 @@ public class Animator {
     private void redrawGraph()
     {
         canvas.getChildren().clear();
+        cancelSelection();
         for(int i=0;i<vertexTable.length;i++)
         {
             if(vertexTable[i]!=null) {

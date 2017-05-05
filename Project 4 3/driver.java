@@ -14,7 +14,7 @@ public class driver
     public static void main(String[] args) throws IOException
     {
         //authenticate the input
-        if(args.length != 1 || !Character.isLetter(args[0].charAt(0)))
+        if(args.length != 3 || !Character.isLetter(args[0].charAt(0)))
         {
             System.out.println("<File>");
             return;
@@ -23,14 +23,14 @@ public class driver
         {
             BFS(args[0]);
             DFS(args[0]);
-            mstWork(args[0]);
+            mstWork(args[0], Integer.parseInt(args[1]), Integer.parseInt(args[2]));
             System.out.println("----------");
-            sptWork(args[0]);
+            sptWork(args[0], Integer.parseInt(args[1]), Integer.parseInt(args[2]));
         }
     }
     //This program follows the sample output provided
     //greedy(int) is a implementation of Dijkstras's algorithm
-    public static void mstWork(String str) throws IOException
+    public static void mstWork(String str, int start, int end) throws IOException
     {
         MST m = new MST(str);
         m.greedy(0);
@@ -66,10 +66,10 @@ public class driver
         System.out.println(path);
     }
     
-    public static void sptWork(String str) throws IOException
+    public static void sptWork(String str, int start, int end) throws IOException
     {
         SPT s = new SPT(str);
-        s.greedy(0);
+        s.greedy(start);
         System.out.println("SPT edges");
         Edge[] e = s.getEdges();
         double sptCost = 0.0;
@@ -83,8 +83,7 @@ public class driver
         }
         System.out.println(str + " SPT cost=" +sptCost);
         ArrayList<Integer> path = new ArrayList<Integer>();
-        int end = s.getOrder() - 1;
-        while(s.getVertex(0) != s.getVertex(end))
+        while(s.getVertex(start) != s.getVertex(end))
         {
             //if the vertex is marked, then it will be added to the ArrayList
             //prevent overlaps
@@ -95,9 +94,8 @@ public class driver
                 end = s.getVertex(end).getParent();
             }
         }
-        path.add(0);
         Collections.reverse(path);
-        System.out.println("Path from 0 to " + (s.getOrder() - 1) + "=" + path);
+        System.out.println("Path from " + start + " to " + end + "=" + path);
         double distance = 0.0;
         for(int i = 0; i < path.size() -1; i++)
             distance += s.weightOf(new Edge(path.get(i), path.get(i+1)));

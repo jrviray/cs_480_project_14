@@ -147,7 +147,7 @@ public class Vertex {
  *  Convert vertex into string for printing
  */
 	public String toString() {
-		return "v"+index;
+		return ""+index;
 	}
 	
 // private class

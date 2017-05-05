@@ -120,6 +120,10 @@ public class Edge implements Comparable<Edge> {
  *  Comparison is based on lexicographic comparison of endpoint indices
  *  @return negative, zero or positive depending on result of comparison
  */
+    public int getV()
+    {return v;}
+    public int getU()
+    {return u;}
 	public int compareTo(Edge that) {
 		if (this.u==that.u) return this.v-that.v;
 		return this.u-that.u;

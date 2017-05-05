@@ -5,6 +5,7 @@ import java.util.Stack;
 import java.util.*;
 import java.io.*;
 import java.lang.Character;
+import javafx.util.Pair;
 //Tsend-Ayush Batbileg
 //CS241
 //Project 4 driver file
@@ -46,16 +47,20 @@ public class driver {
         System.out.println("MPT edges");
         Edge[] e = m.getEdges();
         double mptCost = 0.0;
+        @SuppressWarnings("unchecked")
         Pair<Integer, Integer>[] MSP = new Pair[e.length];
         for(int i = 0; i < e.length; i++)
         {
             if(e[i].isSelected())
             {
-                MSP[i] = new Pair(e[i].getU(), e[i].getV());
+                MSP[i] = new Pair<Integer, Integer>(e[i].getU(), e[i].getV());
                 System.out.println(e[i]);
-                stuff = e.getStuff();
                 mptCost += m.weightOf(e[i]);
             }
+        }
+        for(int i= 0; i < MSP.length; i++)
+        {
+            System.out.println(MSP[i].getKey() + " " + MSP[i].getValue());
         }
         System.out.println(str + " MST cost=" + mptCost);
         GreedyPriorityQueue q = m.getBfs();

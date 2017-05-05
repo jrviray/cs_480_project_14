@@ -46,9 +46,9 @@ public class SaveInfo implements Serializable {
         return vertexTable;
     }
 
-    public Edge[][] getEdgeTable()
+
+    public Edge[][] getEdgeTable(Vertex[] vertexTable)
     {
-        Vertex[] vertexTable = getVertexTable();
         Edge[][] edgeTable = new Edge[serialEdgeTable.length][serialEdgeTable.length];
         for(int i =0;i<edgeTable.length;i++)
         {

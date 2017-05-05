@@ -8,10 +8,11 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
 import javafx.util.Pair;
-import java.io.FileNotFoundException;
-import java.io.PrintWriter;
-import java.io.UnsupportedEncodingException;
+
+import java.io.*;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 import java.util.Optional;
 
 /**
@@ -45,7 +46,7 @@ public class Animator {
     {
         canvas=mainPane;
         outputLabel = new Label("");
-        cancelButton = new Hyperlink("cancel");
+        cancelButton = new Hyperlink("cancel selection");
         outputBox.getChildren().addAll(outputLabel,cancelButton);
         outputBox.setAlignment(Pos.BASELINE_LEFT);
         cancelButton.setVisible(false);
@@ -101,7 +102,7 @@ public class Animator {
 
     private boolean isDragging = false;
     /**
-     * This method is used to attach a drag listener to a vertex
+     * This method is used to attach a drag listener and a click to a vertex
      * @param vertex
      */
     private void attachListener(Vertex vertex)
@@ -139,6 +140,11 @@ public class Animator {
     }
 
 
+    /**
+     * This method is used to add edge on the graph
+     * If the user doesn't select a source and destination vertex,
+     * addition will not operate
+     */
     public void addEdge()
     {
         if(sourceChoice==-1 && destChoice == -1)
@@ -158,6 +164,9 @@ public class Animator {
         }
     }
 
+    /**
+     * This method is to delete edge from the graph
+     */
     public void deleteEdge()
     {
         if(sourceChoice==-1 && destChoice == -1)
@@ -196,7 +205,7 @@ public class Animator {
     public void deleteVertex()
     {
             if(sourceChoice==-1)
-                outputControl_no_soruce();
+                outputControl_no_source();
             else
             {
                 Vertex deleteVertex = vertexTable[sourceChoice];
@@ -217,7 +226,7 @@ public class Animator {
                         edgeTable[i][sourceChoice] = null;
                         edge = edgeTable[sourceChoice][i];
                         deleteFromCanvas(edge);
-                        edgeTable[i][sourceChoice] = null;
+                        edgeTable[sourceChoice][i] = null;
                     }
                     cancelSelection();
                 }
@@ -231,6 +240,7 @@ public class Animator {
     private Pair<Double,Boolean> getAddEdgeInfo()
     {
         Dialog<Pair<Double,Boolean>> inputDialog = new Dialog<>();
+        Alert alert = new Alert(Alert.AlertType.ERROR); // Moved this outside so i can use it else where
         inputDialog.setTitle("Add New Edge");
         VBox layoutBox = new VBox();
         layoutBox.setSpacing(10);
@@ -252,11 +262,20 @@ public class Animator {
 
                 try {
                     Double weight_result = Double.parseDouble(weight.getText());
-                    return new Pair<> (weight_result,isDirected);
+                    if (weight_result < 0.0) { //checking if weight is less than 0, if it is, prompt an error message.
+                    	alert.setTitle("Error");
+                    	alert.setHeaderText("");
+                    	alert.setContentText("A weight cannot be negative!");
+                    	alert.showAndWait();
+                    	return null;
+                    } else  {
+                    	return new Pair<> (weight_result,isDirected);
+                    }
+                   
                 }
                 catch (NumberFormatException | NullPointerException e)
                 {
-                    Alert alert = new Alert(Alert.AlertType.ERROR);
+                   
                     alert.setTitle("Error");
                     alert.setHeaderText("");
                     alert.setContentText("Invalid input!");
@@ -272,6 +291,20 @@ public class Animator {
         Optional<Pair<Double,Boolean>> result = inputDialog.showAndWait();
         return result.isPresent()?result.get():null;
     }
+    
+    
+    private int edgeCount() {
+    	int edges = 0;
+    	
+    	for (int i  = 0; i < edgeTable.length; i++) {
+    		for (int j = 0; j <edgeTable.length; j++) {
+    			//if edgeTable
+    		}
+    	}
+    	
+    	return 0;
+    	
+    }
 
 
     /**
@@ -280,6 +313,9 @@ public class Animator {
     private void writeToFile()
     {
         try (PrintWriter writer = new PrintWriter("graph.txt", "UTF-8")) {
+        	
+        	
+        	//writer.println(vertexTable.length + " " + 
 
             for(int i=0;i<edgeTable.length;i++)
             {
@@ -303,7 +339,7 @@ public class Animator {
         }
     }
 
-    private void outputControl_no_soruce()
+    private void outputControl_no_source()
     {
             outputLabel.setText("Please select a source vertex by clicking.");
     }
@@ -321,13 +357,23 @@ public class Animator {
 
     private void outputControl_select_source()
     {
+
         outputLabel.setText("You selected "+vertexTable[sourceChoice].getContent()+ " as source. Select the destination.");
+
+        outputLabel.setText("You selected "+vertexTable[sourceChoice].getContent()+ " as source. Please select a destination vertex by clicking " +
+                "or click a button above to do an operation.");
+
         cancelButton.setVisible(true);
     }
 
     private void outputControl_select_dest()
     {
+
         outputLabel.setText("You selected "+vertexTable[sourceChoice].getContent()+ " as source and "+vertexTable[destChoice].getContent() + " as destination. Click again to confirm");
+
+        outputLabel.setText("You selected "+vertexTable[sourceChoice].getContent()+ " as source and "+vertexTable[destChoice].getContent() + " as destination." +
+                " Click a button above to do an operation.");
+
         cancelButton.setVisible(true);
     }
 
@@ -356,4 +402,113 @@ public class Animator {
     }
 
     private void deleteFromCanvas(Node... elements) {canvas.getChildren().removeAll(elements);}
+
+    public void saveGraph()
+    {
+
+        TextInputDialog save = new TextInputDialog();
+        save.setTitle("Save Graph");
+        save.setHeaderText(null);
+        save.setContentText("Please enter the name you want to save as:");
+        Optional<String> saveName = save.showAndWait();
+        if(saveName.isPresent())
+        {
+            try {
+                SaveInfo saveGraph = new SaveInfo(vertexTable,edgeTable);
+                FileOutputStream fileSave = new FileOutputStream(saveName.get() + ".dat");
+                ObjectOutputStream dataSave = new ObjectOutputStream(fileSave);
+                dataSave.writeObject(saveGraph);
+                dataSave.close();
+                fileSave.close();
+            }
+            catch (IOException e)
+            {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    public void loadGraph()
+    {
+        List<String> loadableFileName = new ArrayList<>();
+        File curDir = new File(".");
+        File[] allFile=curDir.listFiles();
+
+        for(File x:allFile)
+        {
+            if(x.getName().endsWith(".dat"))
+            {
+                loadableFileName.add(x.getName().replace(".dat",""));
+            }
+        }
+
+        if(loadableFileName.isEmpty())
+        {
+            Alert noFileFound = new Alert(Alert.AlertType.INFORMATION);
+            noFileFound.setTitle("No saved file found");
+            noFileFound.setHeaderText(null);
+            noFileFound.setContentText("No saved file found!");
+            noFileFound.showAndWait();
+        }
+        else
+        {
+            ChoiceDialog<String> load = new ChoiceDialog<>(loadableFileName.get(0),loadableFileName);
+            load.setTitle("Load tree");
+
+            load.setHeaderText(null);
+
+            load.setHeaderText("Load");
+
+            load.setContentText("Please select a tree that you want to load:");
+            Optional<String> fileName = load.showAndWait();
+
+            if(fileName.isPresent())
+            {
+                try {
+                    //load the treeDataSave data;
+                    FileInputStream fileSave = new FileInputStream(fileName.get() + ".dat");
+                    ObjectInputStream dataSave = new ObjectInputStream(fileSave);
+                    SaveInfo loadGraph = (SaveInfo) dataSave.readObject();
+                    dataSave.close();
+                    fileSave.close();
+                    vertexTable = loadGraph.getVertexTable();
+                    edgeTable = loadGraph.getEdgeTable(vertexTable);
+                    redrawGraph();
+
+                }
+                catch (FileNotFoundException e)
+                {
+                    e.printStackTrace();
+                }
+                catch (IOException e)
+                {
+                    e.printStackTrace();
+                }
+                catch (ClassNotFoundException e)
+                {
+                    e.printStackTrace();
+                }
+            }
+        }
+    }
+
+    private void redrawGraph()
+    {
+        canvas.getChildren().clear();
+        for(int i=0;i<vertexTable.length;i++)
+        {
+            if(vertexTable[i]!=null) {
+                drawOnCanvas(vertexTable[i]);
+                attachListener(vertexTable[i]);
+            }
+        }
+        for(int i=0;i<edgeTable.length;i++)
+        {
+            for(int j=0;j<vertexTable.length;j++)
+            {
+                if(edgeTable[i][j]!=null)
+                    drawOnCanvas(edgeTable[i][j]);
+            }
+        }
+    }
 }

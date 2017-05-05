@@ -46,7 +46,7 @@ public class Animator {
     {
         canvas=mainPane;
         outputLabel = new Label("");
-        cancelButton = new Hyperlink("cancel");
+        cancelButton = new Hyperlink("cancel selection");
         outputBox.getChildren().addAll(outputLabel,cancelButton);
         outputBox.setAlignment(Pos.BASELINE_LEFT);
         cancelButton.setVisible(false);
@@ -205,7 +205,7 @@ public class Animator {
     public void deleteVertex()
     {
             if(sourceChoice==-1)
-                outputControl_no_soruce();
+                outputControl_no_source();
             else
             {
                 Vertex deleteVertex = vertexTable[sourceChoice];
@@ -226,7 +226,7 @@ public class Animator {
                         edgeTable[i][sourceChoice] = null;
                         edge = edgeTable[sourceChoice][i];
                         deleteFromCanvas(edge);
-                        edgeTable[i][sourceChoice] = null;
+                        edgeTable[sourceChoice][i] = null;
                     }
                     cancelSelection();
                 }
@@ -312,7 +312,7 @@ public class Animator {
         }
     }
 
-    private void outputControl_no_soruce()
+    private void outputControl_no_source()
     {
             outputLabel.setText("Please select a source vertex by clicking.");
     }
@@ -330,13 +330,15 @@ public class Animator {
 
     private void outputControl_select_source()
     {
-        outputLabel.setText("You selected "+vertexTable[sourceChoice].getContent()+ " as source.");
+        outputLabel.setText("You selected "+vertexTable[sourceChoice].getContent()+ " as source. Please select a destination vertex by clicking " +
+                "or click a button above to do an operation.");
         cancelButton.setVisible(true);
     }
 
     private void outputControl_select_dest()
     {
-        outputLabel.setText("You selected "+vertexTable[sourceChoice].getContent()+ " as source and "+vertexTable[destChoice].getContent() + " as destination.");
+        outputLabel.setText("You selected "+vertexTable[sourceChoice].getContent()+ " as source and "+vertexTable[destChoice].getContent() + " as destination." +
+                " Click a button above to do an operation.");
         cancelButton.setVisible(true);
     }
 
@@ -435,7 +437,7 @@ public class Animator {
                     dataSave.close();
                     fileSave.close();
                     vertexTable = loadGraph.getVertexTable();
-                    edgeTable = loadGraph.getEdgeTable();
+                    edgeTable = loadGraph.getEdgeTable(vertexTable);
                     redrawGraph();
 
                 }

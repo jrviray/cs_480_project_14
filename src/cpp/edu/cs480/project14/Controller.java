@@ -85,7 +85,9 @@ public class Controller extends Application {
 
 
         operate = new Button("operate algorithm");
+        operate.setOnMouseClicked(event -> animator.writeToFile());
         leftPane.getChildren().addAll(addVertex,deleteVertex,addEdge,deleteEdge,algChoice,operate);
+        
 
 
         HBox rightPane = new HBox(20f);
@@ -113,10 +115,11 @@ public class Controller extends Application {
 
 
     }
-
-
-
-
-
-
 }
+
+
+
+
+
+
+

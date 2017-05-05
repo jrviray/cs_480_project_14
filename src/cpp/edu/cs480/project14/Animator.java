@@ -318,17 +318,27 @@ public class Animator {
     	return edges;
     	
     }
+    
+    private int vertexCount() {
+    	int count = 0;
+    	for (int i = 0; i < vertexTable.length; i++) {
+    		if (vertexTable[i] != null) {
+    			count++;
+    		}
+    	}
+    	return count;
+    }
 
 
     /**
      * This method should be called whenever there is a change on vertices or edges
      */
-    private void writeToFile()
+    protected void writeToFile()
     {
         try (PrintWriter writer = new PrintWriter("graph.txt", "UTF-8")) {
         	
         	
-        	writer.println(vertexTable.length + " " + edgeCount()  + " directed");
+        	writer.println(vertexCount()  + " " + edgeCount()  + " directed");
 
             for(int i=0;i<edgeTable.length;i++)
             {
@@ -336,7 +346,7 @@ public class Animator {
                 {
                     if(edgeTable[i][j] !=null)
                     {
-                        writer.println(i  + " " + j + " " + edgeTable[i][j]);
+                        writer.println(i + " " + j + " " + getEdge(i, j).getWeight());
                     }
                 }
             }

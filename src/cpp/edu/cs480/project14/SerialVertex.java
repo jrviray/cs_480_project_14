@@ -13,10 +13,10 @@ public class SerialVertex implements Serializable{
 
     public SerialVertex(Vertex thisVertex)
     {
-            ID = thisVertex.getID();
-            x=thisVertex.getX();
-            y=thisVertex.getY();
-            content = thisVertex.getContent();
+        ID = thisVertex.getID();
+        x=thisVertex.getX();
+        y=thisVertex.getY();
+        content = thisVertex.getContent();
 
     }
 

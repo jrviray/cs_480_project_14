@@ -2,6 +2,7 @@ package cpp.edu.cs480.project14; /**
  * Created by wxy03 on 4/22/2017.
  */
 
+import javafx.animation.SequentialTransition;
 import javafx.application.Application;
 import javafx.collections.FXCollections;
 import javafx.geometry.Insets;
@@ -16,7 +17,7 @@ public class Controller extends Application {
 
     public static final int BREADTH_FIRST_SEARCH=0;
     public static final int DEPTH_FIRST_SEARCH=1;
-    public static final int Greedy_Shortest_Path = 3;
+    public static final int GREEDY_SHORTEST_PATH = 3;
     public static final int DISJKSTRA_PATH=4;
     public static  final int MINIMUM_SPANNING_TREE=5;
 
@@ -25,7 +26,7 @@ public class Controller extends Application {
     private double mainPaneWidth = 1600;
     private double mainPaneHeight = 800;
     private Pane canvas;
-    private Button addVertex,operate,save,load,addEdge,deleteEdge,deleteVertex;
+    private Button addVertex,operate,save,load,addEdge,deleteEdge,deleteVertex,clear_output;
     private ChoiceBox algChoice;
     private int algorithmType;
     private Animator animator;
@@ -69,7 +70,9 @@ public class Controller extends Application {
         addEdge.setOnMouseClicked(event -> {animator.addEdge();});
         deleteEdge = new Button("delete edge");
         deleteEdge.setOnMouseClicked(event -> {animator.deleteEdge();});
-
+        clear_output = new Button("clear output");
+        clear_output.setDisable(true);
+        clear_output.setOnMouseClicked(mouseEvent -> {animator.clearOutput();});
 
 
 
@@ -85,8 +88,11 @@ public class Controller extends Application {
 
 
         operate = new Button("operate algorithm");
-        operate.setOnMouseClicked(event -> animator.writeToFile());
-        leftPane.getChildren().addAll(addVertex,deleteVertex,addEdge,deleteEdge,algChoice,operate);
+        operate.setOnMouseClicked(event -> {animator.writeToFile();
+            SequentialTransition mainAnimation = animator.searchAnimation(new int[]{0,1,2});
+        mainAnimation.setOnFinished(actionEvent -> {clear_output.setDisable(false);});
+        mainAnimation.play();});
+        leftPane.getChildren().addAll(addVertex,deleteVertex,addEdge,deleteEdge,algChoice,operate,clear_output);
         
 
 

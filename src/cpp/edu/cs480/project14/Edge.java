@@ -18,7 +18,6 @@ public class Edge extends Group{
     private Polygon arrow;
     private Text weightText;
     private double weight;
-    public final static Color HIGHLIGHT = new Color(0.2118, 0.6392, 0.2588, 1);
 
     public Edge(Vertex source,Vertex destination, double weight)
     {
@@ -115,9 +114,9 @@ public class Edge extends Group{
     // highlight edge
     public void highLightEdge(){
 
-        edgeLine.setStroke(HIGHLIGHT);
+        edgeLine.setStroke(Vertex.HIGHLIGHT);
         edgeLine.setStrokeWidth(3f);
-        arrow.setFill(HIGHLIGHT);
+        arrow.setFill(Vertex.HIGHLIGHT);
 }
 
     public void unhighLightEdge() {

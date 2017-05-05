@@ -1,5 +1,10 @@
 package cpp.edu.cs480.project14;
 
+import javafx.animation.PauseTransition;
+import javafx.animation.SequentialTransition;
+import javafx.animation.TranslateTransition;
+import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
@@ -10,6 +15,7 @@ import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
 import javafx.scene.shape.StrokeType;
+import javafx.util.Duration;
 import javafx.util.Pair;
 
 import java.io.*;
@@ -17,12 +23,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
-import javafx.animation.PauseTransition;
-import javafx.animation.SequentialTransition;
-import javafx.animation.TranslateTransition;
-import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
-import javafx.util.Duration;
 
 /**
  * Created by wxy03 on 4/24/2017.
@@ -384,16 +384,14 @@ public class Animator {
 
     private void outputControl_no_dest()
     {
-        outputLabel.setText("You selected "+vertexTable[sourceChoice].getContent()+ " as source, please select a destination vertex by clicking.");
+        outputLabel.setText("You selected "+vertexTable[sourceChoice].getContent()+ " as source, please select another destination vertex.");
         cancelButton.setVisible(true);
     }
 
     private void outputControl_select_source()
     {
 
-        outputLabel.setText("You selected "+vertexTable[sourceChoice].getContent()+ " as source. Select the destination.");
-
-        outputLabel.setText("You selected "+vertexTable[sourceChoice].getContent()+ " as source. Please select a destination vertex by clicking " +
+        outputLabel.setText("You selected "+vertexTable[sourceChoice].getContent()+ " as source, you can select another destination vertex " +
                 "or click a button above to do an operation.");
 
         cancelButton.setVisible(true);
@@ -401,8 +399,6 @@ public class Animator {
 
     private void outputControl_select_dest()
     {
-
-        outputLabel.setText("You selected "+vertexTable[sourceChoice].getContent()+ " as source and "+vertexTable[destChoice].getContent() + " as destination. Click again to confirm");
 
         outputLabel.setText("You selected "+vertexTable[sourceChoice].getContent()+ " as source and "+vertexTable[destChoice].getContent() + " as destination." +
                 " Click a button above to do an operation.");
@@ -556,6 +552,7 @@ public class Animator {
         highlightCircle.setStrokeWidth(5);
         return highlightCircle;
     }
+
     public SequentialTransition searchAnimation(int[] path)
     {
         SequentialTransition mainAnimation = new SequentialTransition();
@@ -564,12 +561,37 @@ public class Animator {
         //get the traversal animation
         SequentialTransition traversalAnimation = highlightTraversal(highlightCircle, path);
         //remove the highlight circle from the canvas
-        PauseTransition removeCircle = new PauseTransition(Duration.seconds(.5f));
+        PauseTransition removeCircle = new PauseTransition(Duration.ONE);
         removeCircle.setOnFinished(actionEvent->{deleteFromCanvas(highlightCircle);});
         mainAnimation.getChildren().addAll(traversalAnimation,removeCircle);
 
         return mainAnimation;
 
+    }
+
+    private void lockAllVertex()
+    {
+        for(int i =0;i<vertexTable.length;i++)
+        {
+            if(getVertex(i)!=null)
+            {
+                getVertex(i).setOnMouseDragged(null);
+                getVertex(i).setOnMousePressed(null);
+                getVertex(i).setOnMouseReleased(null);
+            }
+        }
+    }
+
+    private void unlockAllVertex()
+    {
+
+        for(int i =0;i<vertexTable.length;i++)
+        {
+            if(getVertex(i)!=null)
+            {
+                attachListener(getVertex(i));
+            }
+        }
     }
 
     private SequentialTransition highlightTraversal(Circle circle, int[] path)
@@ -581,7 +603,8 @@ public class Animator {
         
         circle.setTranslateX(startingVertex.getX());
         circle.setTranslateY(startingVertex.getY());
-        drawCircle.setOnFinished(actionEvent->{drawOnCanvas(circle);});
+        drawCircle.setOnFinished(actionEvent->{drawOnCanvas(circle);
+        lockAllVertex();});
         mainAnimation.getChildren().add(drawCircle);
         
         
@@ -592,6 +615,7 @@ public class Animator {
                     this.movementTo(circle, nextVertex.getX(), nextVertex.getY(), event -> {nextVertex.highLightCircle();})); 
         }
         mainAnimation.getChildren().add(new PauseTransition(Duration.seconds(.5f)));
+        mainAnimation.setOnFinished(event->{unlockAllVertex();});
         return mainAnimation;
     }
     
@@ -603,5 +627,24 @@ public class Animator {
         movementTo.setToY(y);
         movementTo.setOnFinished(onFinish);
         return movementTo;
+    }
+
+    public void clearOutput()
+    {
+        for(Vertex thisVertex: vertexTable)
+        {
+            if(thisVertex!=null && thisVertex.getID()!=sourceChoice && thisVertex.getID()!= destChoice)
+                thisVertex.unhighLightCircle();
+        }
+        for(Edge[] iEdge:edgeTable)
+        {
+            for(Edge jEdge:iEdge)
+            {
+                if(jEdge!=null)
+                    jEdge.unhighLightEdge();
+            }
+        }
+
+
     }
 }

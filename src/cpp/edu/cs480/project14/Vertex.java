@@ -15,7 +15,7 @@ import javafx.scene.text.Text;
 public class Vertex extends Group{
 
     public  final static Color NORMAL_STROKE = new Color(0.0745, 0.3843, 0.8039, 1);
-    public final static Color HIGHLIGHT = new Color(0.2118, 0.6392, 0.2588, 1);
+    public final static Color HIGHLIGHT = new Color(1, 0.373, 0.3098, 1);
     public static double RADIUS=25f;
     private Circle circle;
     private Text text;

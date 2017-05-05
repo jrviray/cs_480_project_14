@@ -17,6 +17,12 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
+import javafx.animation.PauseTransition;
+import javafx.animation.SequentialTransition;
+import javafx.animation.TranslateTransition;
+import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
+import javafx.util.Duration;
 
 /**
  * Created by wxy03 on 4/24/2017.
@@ -550,41 +556,52 @@ public class Animator {
         highlightCircle.setStrokeWidth(5);
         return highlightCircle;
     }
-//    private SequentialTransition searchAnimation(int[] path)
-//    {
-//        SequentialTransition mainAnimation = new SequentialTransition();
-//        //initialize the highlight circle to the root node
-//        Circle highlightCircle = createHighlightCircle();
-//        //get the traversal animation
-//        SequentialTransition traversalAnimation = highlightTraversal(highlightCircle,traversalStack);
-//
-//        //remove the highlight circle from the canvas
-//        PauseTransition removeCircle = new PauseTransition(Duration.seconds(.5f));
-//        removeCircle.setOnFinished(actionEvent->{deleteFromCanvas(highlightCircle);});
-//        mainAnimation.getChildren().addAll(traversalAnimation,removeCircle);
-//
-//        return mainAnimation;
-//
-//    }
-//
-//        private SequentialTransition highlightTraversal(Circle circle,Stack<GraphicNode> path)
-//    {
-//        SequentialTransition mainAnimation = new SequentialTransition();
-//        final GraphicNode startingNode=path.pop();
-//        PauseTransition drawCircle = new PauseTransition(Duration.ONE);
-//        circle.setTranslateX(startingNode.getX());
-//        circle.setTranslateY(startingNode.getY());
-//        drawCircle.setOnFinished(actionEvent->{drawOnCanvas(circle);});
-//        mainAnimation.getChildren().add(drawCircle);
-//        while(!path.isEmpty()) {
-//
-//            final GraphicNode nextNode = path.pop();
-//            mainAnimation.getChildren().addAll(new PauseTransition(Duration.seconds(.5f)),
-//                    //when reach a node, wait for a while
-//                    this.movementTo(circle, nextNode.getX(), nextNode.getY(),null));
-//                    //move to the next node
-//        }
-//        mainAnimation.getChildren().add(new PauseTransition(Duration.seconds(.5f)));
-//            return  mainAnimation;
-//    }
+    public SequentialTransition searchAnimation(int[] path)
+    {
+        SequentialTransition mainAnimation = new SequentialTransition();
+        //initialize the highlight circle to the root node
+        Circle highlightCircle = createHighlightCircle();
+        //get the traversal animation
+        SequentialTransition traversalAnimation = highlightTraversal(highlightCircle, path);
+        //remove the highlight circle from the canvas
+        PauseTransition removeCircle = new PauseTransition(Duration.seconds(.5f));
+        removeCircle.setOnFinished(actionEvent->{deleteFromCanvas(highlightCircle);});
+        mainAnimation.getChildren().addAll(traversalAnimation,removeCircle);
+
+        return mainAnimation;
+
+    }
+
+    private SequentialTransition highlightTraversal(Circle circle, int[] path)
+    {
+        SequentialTransition mainAnimation = new SequentialTransition();
+        final Vertex startingVertex = getVertex(path[0]);
+        startingVertex.highLightCircle();
+        PauseTransition drawCircle = new PauseTransition(Duration.ONE);
+        
+        circle.setTranslateX(startingVertex.getX());
+        circle.setTranslateY(startingVertex.getY());
+        drawCircle.setOnFinished(actionEvent->{drawOnCanvas(circle);});
+        mainAnimation.getChildren().add(drawCircle);
+        
+        
+        
+        for (int i = 1; i < path.length; i++) {
+            Vertex nextVertex = getVertex(path[i]);
+            mainAnimation.getChildren().addAll(new PauseTransition(Duration.seconds(.5f)),
+                    this.movementTo(circle, nextVertex.getX(), nextVertex.getY(), event -> {nextVertex.highLightCircle();})); 
+        }
+        mainAnimation.getChildren().add(new PauseTransition(Duration.seconds(.5f)));
+        return mainAnimation;
+    }
+    
+    
+    private TranslateTransition movementTo(Circle target, double x, double y, EventHandler<ActionEvent> onFinish)
+    {
+        TranslateTransition movementTo = new TranslateTransition(Duration.seconds(1),target);
+        movementTo.setToX(x);
+        movementTo.setToY(y);
+        movementTo.setOnFinished(onFinish);
+        return movementTo;
+    }
 }

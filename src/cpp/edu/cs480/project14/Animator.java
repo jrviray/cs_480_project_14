@@ -14,6 +14,13 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
+import java.util.Stack;
+import javafx.animation.PauseTransition;
+import javafx.animation.SequentialTransition;
+import javafx.scene.paint.Color;
+import javafx.scene.shape.Circle;
+import javafx.scene.shape.StrokeType;
+import javafx.util.Duration;
 
 /**
  * Created by wxy03 on 4/24/2017.
@@ -100,8 +107,14 @@ public class Animator {
         }
 
     }
-
-
+    public Vertex getVertex(int ID) {
+        Vertex ret = vertexTable[ID];
+        return ret;
+    }
+    public Edge getEdge(int sourceID, int destID) {
+        Edge ret = edgeTable[sourceID][destID];
+        return ret;
+    }
     private boolean isDragging = false;
     /**
      * This method is used to attach a drag listener and a click to a vertex
@@ -506,7 +519,6 @@ public class Animator {
     private void redrawGraph()
     {
         canvas.getChildren().clear();
-        cancelSelection();
         for(int i=0;i<vertexTable.length;i++)
         {
             if(vertexTable[i]!=null) {
@@ -518,11 +530,55 @@ public class Animator {
         {
             for(int j=0;j<vertexTable.length;j++)
             {
-                if(edgeTable[i][j]!=null) {
+                if(edgeTable[i][j]!=null)
                     drawOnCanvas(edgeTable[i][j]);
-                    edgeTable[i][j].toBack();
-                }
             }
         }
     }
+    private Circle createHighlightCircle()
+    {
+        Circle highlightCircle = new Circle(Vertex.RADIUS);
+        highlightCircle.setFill(new Color(0,0,0,0));
+        highlightCircle.setStroke(Vertex.HIGHLIGHT);
+        highlightCircle.setStrokeType(StrokeType.OUTSIDE);
+        highlightCircle.setStrokeWidth(5);
+        return highlightCircle;
+    }
+//    private SequentialTransition searchAnimation(int[] path)
+//    {
+//        SequentialTransition mainAnimation = new SequentialTransition();
+//        //initialize the highlight circle to the root node
+//        Circle highlightCircle = createHighlightCircle();
+//        //get the traversal animation
+//        SequentialTransition traversalAnimation = highlightTraversal(highlightCircle,traversalStack);
+//
+//        //remove the highlight circle from the canvas
+//        PauseTransition removeCircle = new PauseTransition(Duration.seconds(.5f));
+//        removeCircle.setOnFinished(actionEvent->{deleteFromCanvas(highlightCircle);});
+//        mainAnimation.getChildren().addAll(traversalAnimation,removeCircle);
+//
+//        return mainAnimation;
+//
+//    }
+//
+//        private SequentialTransition highlightTraversal(Circle circle,Stack<GraphicNode> path)
+//    {
+//        SequentialTransition mainAnimation = new SequentialTransition();
+//        final GraphicNode startingNode=path.pop();
+//        PauseTransition drawCircle = new PauseTransition(Duration.ONE);
+//        circle.setTranslateX(startingNode.getX());
+//        circle.setTranslateY(startingNode.getY());
+//        drawCircle.setOnFinished(actionEvent->{drawOnCanvas(circle);});
+//        mainAnimation.getChildren().add(drawCircle);
+//        while(!path.isEmpty()) {
+//
+//            final GraphicNode nextNode = path.pop();
+//            mainAnimation.getChildren().addAll(new PauseTransition(Duration.seconds(.5f)),
+//                    //when reach a node, wait for a while
+//                    this.movementTo(circle, nextNode.getX(), nextNode.getY(),null));
+//                    //move to the next node
+//        }
+//        mainAnimation.getChildren().add(new PauseTransition(Duration.seconds(.5f)));
+//            return  mainAnimation;
+//    }
 }

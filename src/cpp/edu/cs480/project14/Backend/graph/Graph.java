@@ -1,11 +1,25 @@
 //System.out. LLC
-//Copyright (c) Mandayam A. Srinivas
+
 package cpp.edu.cs480.project14.Backend.graph;
 import java.io.*;
 import java.util.*;
-
+/**
+ *	Implements Graph ADT using adjacency lists.
+ * 
+ * Class variables:
+ * <ul>
+ * <li> name: graph data file name
+ * <li> order: number of vertices
+ * <li> size: number of edges
+ * <li> directed: is graph directed?
+ * <li> weighted: is graph weighted?
+ * <li> vertices: vertex array
+ * <li> edges: edge map
+ * </ul>
+ * 
+ */
 public class Graph {
-	private final boolean DEBUG=true;
+	private final boolean DEBUG=false;
 	private Scanner in;
 	protected String name;
 	protected int order, size;
@@ -13,22 +27,40 @@ public class Graph {
 	protected boolean weighted;
 	protected Vertex[] vertices;
 	protected TreeMap<Edge,Edge> edges=new TreeMap<>();
-    public Graph() {}
-    public Graph(String name) throws IOException
-    {
+	             // key is just a vertex pair, value provides details 
+
+// constructors
+/**
+ * Default constructor
+ */
+public Graph() {}
+
+/**
+ * Reads file and builds graph
+ */
+	public Graph(String name) throws IOException { 
 		process_header(name);
 		add_vertices();
 		add_edges();
 	}
 	
-
+/**
+ * Builds empty graph with given characteristics
+ */
+	public Graph(String name, int order, int size, boolean directed, boolean weighted) {
+		this.name=name;
+		this.order=order;
+		this.size=size;
+		this.directed=directed;
+		this.weighted=weighted;
+		add_vertices();
+	}
 	
 // methods to build graph from file
 /**
  * Open file and process header line
  */
-	protected void process_header(String name) throws java.io.IOException
-    {
+	protected void process_header(String name) throws java.io.IOException {
 		in=new Scanner(new File(name));
 		this.name=name;
 		this.order=in.nextInt();
@@ -41,8 +73,7 @@ public class Graph {
 /**
  * Create vertex array
  */
-	protected void add_vertices()
-    {
+	protected void add_vertices() {
 		if(DEBUG)System.out.println("Graph.add_vertices");
 		this.vertices=new Vertex[order];
 		for (int i=0; i<order; i++) {
@@ -53,10 +84,8 @@ public class Graph {
 /**
  * create edge dictionary and adjacency lists
  */
-	protected void add_edges()
-    {
-		for (int i=0;i<size;i++)
-        {
+	protected void add_edges() {
+		for (int i=0;i<size;i++) {
 			String line=in.nextLine();
 			String[] val=(line.trim()).split("\\s+");
 			int u=Integer.parseInt(val[0]);

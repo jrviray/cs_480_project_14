@@ -1,5 +1,4 @@
 //System.out. LLC
-//Copyright (c) Mandayam A. Srinivas
 
 /**
  * Information associated with greedy vertex:

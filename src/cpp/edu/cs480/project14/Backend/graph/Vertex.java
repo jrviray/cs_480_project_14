@@ -1,6 +1,6 @@
 //System.out. LLC
-//
-//Copyright (c) Mandayam A. Srinivas
+
+// Copyright (c) Mandayam A. Srinivas
 /**
  *  A vertex is identified by an integer index<p>
  *
@@ -131,6 +131,7 @@ public class Vertex {
 		neighbors=new AdjNode(v, neighbors);
 		degree++;
 	}
+
 /**
  *  Return list of vertex neighbors
  *  @return array of adjacent vertices
@@ -138,16 +139,17 @@ public class Vertex {
 	public int[] getNeighbors() {
 		int[] pals = new int[degree];
 		int i = 0;
-		for (AdjNode p=neighbors;p!=null;p=p.next)
-			pals[i++]=p.v;
+		for (AdjNode p=neighbors;p!=null;p=p.next) pals[i++]=p.v;
 		return pals;
 	}
+
 /**
  *  Convert vertex into string for printing
  */
 	public String toString() {
-		return "v"+index;
+		return ""+index;
 	}
+	
 // private class
 	private class AdjNode {
 		int v;

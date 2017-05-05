@@ -1,5 +1,16 @@
 //System.out. LLC
-//
+// Copyright (c) Mandayam A. Srinivas
+//mas 2010-02-03
+/**
+*  An edge is a pair (u,v) where u and v are vertex indices
+*
+*	<ul>
+*	<li> directed: true for directed graphs, false for undirected graphs
+*	<li> weighted: true for weighted graphs, false for unweighted graphs
+*	<li> weight: edge weight
+*	<li> selected: true if edge is in tree
+*	</ul>
+*/
 package cpp.edu.cs480.project14.Backend.graph;
 public class Edge implements Comparable<Edge> {
 	protected int u,v;
@@ -19,6 +30,7 @@ public class Edge implements Comparable<Edge> {
 	public Edge(int u, int v, double weight) {
 		this(u,v,false,true,weight);
 	}
+	
 	public Edge(int u, int v, boolean directed, boolean weighted, double weight) {
 		if (directed) {
 			this.u = u;
@@ -33,6 +45,7 @@ public class Edge implements Comparable<Edge> {
 		this.weight=weight;
 		this.selected=false;
 	}
+	
 /**
  *  Is edge directed?
  *  @return true if vertex is directed
@@ -107,6 +120,10 @@ public class Edge implements Comparable<Edge> {
  *  Comparison is based on lexicographic comparison of endpoint indices
  *  @return negative, zero or positive depending on result of comparison
  */
+    public int getV()
+    {return v;}
+    public int getU()
+    {return u;}
 	public int compareTo(Edge that) {
 		if (this.u==that.u) return this.v-that.v;
 		return this.u-that.u;

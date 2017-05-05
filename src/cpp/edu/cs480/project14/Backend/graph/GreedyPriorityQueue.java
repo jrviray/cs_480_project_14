@@ -1,5 +1,5 @@
 //System.out. LLC
-//Copyright (c) Mandayam A. Srinivas
+
 package cpp.edu.cs480.project14.Backend.graph;
 import java.util.*;
 /**
@@ -10,6 +10,7 @@ import java.util.*;
  * For vertex k, j=index[k] can be used with heap.get(j) to retrieve the vertex.
  * Code based on earlier versions by current author (2004, 2008).
  * Algorithm based on Brassard and Bratley: Algorithmics (1988).
+ *
  */
 
 public class GreedyPriorityQueue {

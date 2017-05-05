@@ -74,9 +74,12 @@ public class Edge extends Group{
                 else
                 {
                     double angle = Math.toDegrees(Math.atan(deltaY/deltaX));
-                    if(sourceX<destX)
+                    if(sourceX<destX) {
+                        weightText.setRotate(0);
                         return angle;
+                    }
                     else {
+                        weightText.setRotate(180);
                         return angle + 180;
                     }
                 }

@@ -7,6 +7,9 @@ import javafx.scene.control.*;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
+import javafx.scene.paint.Color;
+import javafx.scene.shape.Circle;
+import javafx.scene.shape.StrokeType;
 import javafx.util.Pair;
 
 import java.io.*;
@@ -14,13 +17,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
-import java.util.Stack;
-import javafx.animation.PauseTransition;
-import javafx.animation.SequentialTransition;
-import javafx.scene.paint.Color;
-import javafx.scene.shape.Circle;
-import javafx.scene.shape.StrokeType;
-import javafx.util.Duration;
 
 /**
  * Created by wxy03 on 4/24/2017.
@@ -516,6 +512,7 @@ public class Animator {
     private void redrawGraph()
     {
         canvas.getChildren().clear();
+        cancelSelection();
         for(int i=0;i<vertexTable.length;i++)
         {
             if(vertexTable[i]!=null) {
@@ -527,8 +524,10 @@ public class Animator {
         {
             for(int j=0;j<vertexTable.length;j++)
             {
-                if(edgeTable[i][j]!=null)
+                if(edgeTable[i][j]!=null) {
                     drawOnCanvas(edgeTable[i][j]);
+                    edgeTable[i][j].toBack();
+                }
             }
         }
     }

@@ -8,10 +8,11 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
 import javafx.util.Pair;
-import java.io.FileNotFoundException;
-import java.io.PrintWriter;
-import java.io.UnsupportedEncodingException;
+
+import java.io.*;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 import java.util.Optional;
 
 /**
@@ -101,7 +102,7 @@ public class Animator {
 
     private boolean isDragging = false;
     /**
-     * This method is used to attach a drag listener to a vertex
+     * This method is used to attach a drag listener and a click to a vertex
      * @param vertex
      */
     private void attachListener(Vertex vertex)
@@ -139,6 +140,11 @@ public class Animator {
     }
 
 
+    /**
+     * This method is used to add edge on the graph
+     * If the user doesn't select a source and destination vertex,
+     * addition will not operate
+     */
     public void addEdge()
     {
         if(sourceChoice==-1 && destChoice == -1)
@@ -158,6 +164,9 @@ public class Animator {
         }
     }
 
+    /**
+     * This method is to delete edge from the graph
+     */
     public void deleteEdge()
     {
         if(sourceChoice==-1 && destChoice == -1)
@@ -356,4 +365,113 @@ public class Animator {
     }
 
     private void deleteFromCanvas(Node... elements) {canvas.getChildren().removeAll(elements);}
+
+    public void saveGraph()
+    {
+
+        TextInputDialog save = new TextInputDialog();
+        save.setTitle("Save Graph");
+        save.setHeaderText(null);
+        save.setContentText("Please enter the name you want to save as:");
+        Optional<String> saveName = save.showAndWait();
+        if(saveName.isPresent())
+        {
+            try {
+                SaveInfo saveGraph = new SaveInfo(vertexTable,edgeTable);
+                FileOutputStream fileSave = new FileOutputStream(saveName.get() + ".dat");
+                ObjectOutputStream dataSave = new ObjectOutputStream(fileSave);
+                dataSave.writeObject(saveGraph);
+                dataSave.close();
+                fileSave.close();
+            }
+            catch (IOException e)
+            {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    public void loadGraph()
+    {
+        List<String> loadableFileName = new ArrayList<>();
+        File curDir = new File(".");
+        File[] allFile=curDir.listFiles();
+
+        for(File x:allFile)
+        {
+            if(x.getName().endsWith(".dat"))
+            {
+                loadableFileName.add(x.getName().replace(".dat",""));
+            }
+        }
+
+        if(loadableFileName.isEmpty())
+        {
+            Alert noFileFound = new Alert(Alert.AlertType.INFORMATION);
+            noFileFound.setTitle("No saved file found");
+            noFileFound.setHeaderText(null);
+            noFileFound.setContentText("No saved file found!");
+            noFileFound.showAndWait();
+        }
+        else
+        {
+            ChoiceDialog<String> load = new ChoiceDialog<>(loadableFileName.get(0),loadableFileName);
+            load.setTitle("Load tree");
+
+            load.setHeaderText(null);
+
+            load.setHeaderText("Load");
+
+            load.setContentText("Please select a tree that you want to load:");
+            Optional<String> fileName = load.showAndWait();
+
+            if(fileName.isPresent())
+            {
+                try {
+                    //load the treeDataSave data;
+                    FileInputStream fileSave = new FileInputStream(fileName.get() + ".dat");
+                    ObjectInputStream dataSave = new ObjectInputStream(fileSave);
+                    SaveInfo loadGraph = (SaveInfo) dataSave.readObject();
+                    dataSave.close();
+                    fileSave.close();
+                    vertexTable = loadGraph.getVertexTable();
+                    edgeTable = loadGraph.getEdgeTable();
+                    redrawGraph();
+
+                }
+                catch (FileNotFoundException e)
+                {
+                    e.printStackTrace();
+                }
+                catch (IOException e)
+                {
+                    e.printStackTrace();
+                }
+                catch (ClassNotFoundException e)
+                {
+                    e.printStackTrace();
+                }
+            }
+        }
+    }
+
+    private void redrawGraph()
+    {
+        canvas.getChildren().clear();
+        for(int i=0;i<vertexTable.length;i++)
+        {
+            if(vertexTable[i]!=null) {
+                drawOnCanvas(vertexTable[i]);
+                attachListener(vertexTable[i]);
+            }
+        }
+        for(int i=0;i<edgeTable.length;i++)
+        {
+            for(int j=0;j<vertexTable.length;j++)
+            {
+                if(edgeTable[i][j]!=null)
+                    drawOnCanvas(edgeTable[i][j]);
+            }
+        }
+    }
 }

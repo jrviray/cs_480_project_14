@@ -92,7 +92,9 @@ public class Controller extends Application {
         rightPane.setPadding(new Insets(20f,20f,10f,20f));
         rightPane.setAlignment(Pos.BASELINE_RIGHT);
         save = new Button("save");
+        save.setOnMouseClicked(event -> {animator.saveGraph();});
         load = new Button("load");
+        load.setOnMouseClicked(event -> {animator.loadGraph();});
         rightPane.getChildren().addAll(save,load);
 
         HBox outputBox = new HBox();

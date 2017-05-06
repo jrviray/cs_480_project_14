@@ -752,11 +752,18 @@ public class Animator {
 
     private PauseTransition highlightResult(ArrayList<Integer> path)
     {
-        cancelSelection();
-        if(path==null)
+
+
+        if(path==null) {
+            cancelSelection();
             return null;
+        }
         else {
+            getEdge(sourceChoice,path.get(0)).highLightEdge();
+            getEdge(sourceChoice,path.get(0)).toFront();
+            getVertex(sourceChoice).highLightCircle();
             PauseTransition mainAnimation = new PauseTransition(Duration.ONE);
+            cancelSelection();
             for (int i = 0; i < path.size() - 1; i++) {
                 int sourceID = path.get(i);
                 int destID = path.get(i+1);

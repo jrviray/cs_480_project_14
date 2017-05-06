@@ -2,6 +2,7 @@ package cpp.edu.cs480.project14; /**
  * Created by wxy03 on 4/22/2017.
  */
 
+import javafx.animation.Animation;
 import javafx.animation.SequentialTransition;
 import javafx.application.Application;
 import javafx.collections.FXCollections;
@@ -11,6 +12,8 @@ import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.layout.*;
 import javafx.stage.Stage;
+
+import java.io.IOException;
 
 public class Controller extends Application {
 
@@ -72,7 +75,7 @@ public class Controller extends Application {
         deleteEdge.setOnMouseClicked(event -> {animator.deleteEdge();});
         clear_output = new Button("clear output");
         clear_output.setDisable(true);
-        clear_output.setOnMouseClicked(mouseEvent -> {animator.clearOutput();});
+        clear_output.setOnMouseClicked(mouseEvent -> {animator.clearOutput();clear_output.setDisable(true);});
 
 
 
@@ -88,10 +91,8 @@ public class Controller extends Application {
 
 
         operate = new Button("operate algorithm");
-        operate.setOnMouseClicked(event -> {animator.writeToFile();
-            SequentialTransition mainAnimation = animator.searchAnimation(new int[]{0,1,2});
-        mainAnimation.setOnFinished(actionEvent -> {clear_output.setDisable(false);});
-        mainAnimation.play();});
+        operate.setOnMouseClicked(
+                event -> {doAlgorithm();});
         leftPane.getChildren().addAll(addVertex,deleteVertex,addEdge,deleteEdge,algChoice,operate,clear_output);
         
 
@@ -121,6 +122,24 @@ public class Controller extends Application {
 
 
     }
+
+    private void doAlgorithm()
+    {
+        try {
+            Animation mainAnimation = animator.makeAlgorithm(algorithmType);
+            if(mainAnimation!=null) {
+                mainAnimation.setOnFinished(event -> {
+                    clear_output.setDisable(false);
+                });
+                mainAnimation.play();
+            }
+        }
+        catch (IOException e)
+        {
+            e.printStackTrace();
+        }
+    }
+
 }
 
 

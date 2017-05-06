@@ -1,5 +1,6 @@
 package cpp.edu.cs480.project14;
 
+import javafx.animation.Animation;
 import javafx.animation.PauseTransition;
 import javafx.animation.SequentialTransition;
 import javafx.animation.TranslateTransition;
@@ -17,7 +18,7 @@ import javafx.scene.shape.Circle;
 import javafx.scene.shape.StrokeType;
 import javafx.util.Duration;
 import javafx.util.Pair;
-
+import cpp.edu.cs480.project14.Backend.driver;
 import java.io.*;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -28,6 +29,8 @@ import java.util.Optional;
  * Created by wxy03 on 4/24/2017.
  */
 public class Animator {
+
+    private final String  FILE_NAME= "graph.txt";
 
     private Pane canvas;
 
@@ -341,7 +344,7 @@ public class Animator {
      */
     protected void writeToFile()
     {
-        try (PrintWriter writer = new PrintWriter("graph.txt", "UTF-8")) {
+        try (PrintWriter writer = new PrintWriter(FILE_NAME, "UTF-8")) {
         	
         	
         	writer.println(vertexCount()  + " " + edgeCount()  + " directed");
@@ -560,7 +563,9 @@ public class Animator {
             Circle highlightCircle = createHighlightCircle();
             //get the traversal animation
 
-            SequentialTransition traversalAnimation = highlightTraversal(highlightCircle, (Integer[])path.toArray());
+            Integer[] pathArray = new Integer[path.size()];
+            path.toArray(pathArray);
+            SequentialTransition traversalAnimation = highlightTraversal(highlightCircle, pathArray);
             //remove the highlight circle from the canvas
             PauseTransition removeCircle = new PauseTransition(Duration.ONE);
             removeCircle.setOnFinished(actionEvent -> {
@@ -570,7 +575,7 @@ public class Animator {
             return mainAnimation;
     }
 
-    public SequentialTransition makeAlgorithm(int algType)
+    public Animation makeAlgorithm(int algType) throws IOException
     {
         writeToFile();
         switch (algType)
@@ -579,26 +584,53 @@ public class Animator {
                 if(sourceChoice==-1)
                     return null;
                 else
-                {
-                    //call BFS in backend to get an array of path
-                    return searchAnimation();
-                }
-                break;
+                    return searchAnimation(driver.BFS(FILE_NAME,sourceChoice));
 
-                case Controller.DEPTH_FIRST_SEARCH:
+            case Controller.DEPTH_FIRST_SEARCH:
+                if(sourceChoice==-1)
+                    return null;
+                else
+                    return searchAnimation(driver.DFS(FILE_NAME,sourceChoice));
+
+            case Controller.DISJKSTRA_PATH:
+                if(sourceChoice==-1 && destChoice==-1)
+                {
+                    outputControl_no_source_dest();
+                    return null;
+                }
+                else if(destChoice==-1)
+                {
+                    outputControl_no_dest();
+                    return null;
+                }
+                else
+                {
+                    return highlightResult(driver.dijkstras(FILE_NAME,sourceChoice,destChoice));
+                }
+
+            case Controller.GREEDY_SHORTEST_PATH:
+                if(sourceChoice==-1)
+                {
+                    outputControl_no_source();
+                    return null;
+                }
+                else
+                {
+                    return highlightResult(driver.sptWork(FILE_NAME,sourceChoice));
+                }
+
+                case Controller.MINIMUM_SPANNING_TREE:
                     if(sourceChoice==-1)
+                    {
+                        outputControl_no_source();
                         return null;
+                    }
                     else
                     {
-                        //call BFS in backend to get an array of path
-                        int[] path;
-                        return searchAnimation(path);
+                        return highlightResult(driver.mstWork(FILE_NAME,sourceChoice));
                     }
-                    break;
-
-                    case
-
-
+                default:
+                    return null;
         }
     }
 
@@ -631,6 +663,7 @@ public class Animator {
 
     private SequentialTransition highlightTraversal(Circle circle, Integer[] path)
     {
+        cancelSelection();
         SequentialTransition mainAnimation = new SequentialTransition();
         final Vertex startingVertex = getVertex(path[0]);
         startingVertex.highLightCircle();
@@ -679,7 +712,45 @@ public class Animator {
                     jEdge.unhighLightEdge();
             }
         }
+    }
 
+    private PauseTransition highlightResult(Pair<Integer,Integer>[] path)
+    {
+        cancelSelection();
+        PauseTransition mainAnimation = new PauseTransition(Duration.ONE);
+        for (Pair<Integer,Integer> thisEdge: path)
+        {
+            if(thisEdge!=null)
+            {
+                int sourceID = thisEdge.getKey();
+                int destID = thisEdge.getValue();
+                getEdge(sourceID,destID).highLightEdge();
+                getEdge(sourceID,destID).toFront();
+                getVertex(sourceID).highLightCircle();
+                getVertex(destID).highLightCircle();
+            }
+        }
+        return mainAnimation;
+    }
 
+    private PauseTransition highlightResult(ArrayList<Integer> path)
+    {
+        cancelSelection();
+        PauseTransition mainAnimation = new PauseTransition(Duration.ONE);
+        for(int i =0;i<path.size()-1;i++)
+        {
+            int sourceID = path.get(i);
+            int destID = path.get(i+1);
+            getEdge(sourceID,destID).highLightEdge();
+            getEdge(sourceID,destID).toFront();
+            getVertex(sourceID).highLightCircle();
+            getVertex(destID).highLightCircle();
+        }
+        return mainAnimation;
+    }
+
+    private void outputControl_totalCost(double cost)
+    {
+        outputLabel.setText("Total cost is: "+cost);
     }
 }

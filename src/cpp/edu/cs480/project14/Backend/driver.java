@@ -18,7 +18,7 @@ public class driver
     private double djkDistance;
     private double mstCost;
     private double sptCost;
-    
+
     public double getDjDistace()
     {return djkDistance;}
     public double getMSTCost()
@@ -34,7 +34,7 @@ public class driver
 
     //This program follows the sample output provided
     //greedy(int) is a implementation of Dijkstras's algorithm
-    public static Pair<Integer, Integer>[] mstWork(String str, int start, int end) throws IOException
+    public static Pair<Integer, Integer>[] mstWork(String str, int start) throws IOException
     {
         MST m = new MST(str);
         m.greedy(start);
@@ -57,7 +57,7 @@ public class driver
         m.greedy(start);
         GreedyPriorityQueue bfsPath = m.getBFS();
         ArrayList<Integer> array = new ArrayList<Integer>();
-       while(bfsPath.size() > 0)
+        while(bfsPath.size() > 0)
         {
             array.add(bfsPath.poll().getIndex());
         }
@@ -71,7 +71,7 @@ public class driver
         return dfsPath;
     }
 
-    public static Pair<Integer, Integer>[] sptWork(String str, int start, int end) throws IOException
+    public static Pair<Integer, Integer>[] sptWork(String str, int start) throws IOException
     {
         SPT s = new SPT(str);
         s.greedy(start);
@@ -108,7 +108,7 @@ public class driver
         double djkDistance = 0.0;
         for(int i = 0; i < dPath.size() -1; i++)
             djkDistance += g.weightOf(new Edge(dPath.get(i), dPath.get(i+1)));
-            System.out.println(djkDistance);
+        System.out.println(djkDistance);
         return dPath;
     }
 }

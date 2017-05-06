@@ -553,21 +553,56 @@ public class Animator {
         return highlightCircle;
     }
 
-    public SequentialTransition searchAnimation(int[] path)
+    public SequentialTransition searchAnimation(ArrayList<Integer> path)
     {
-        SequentialTransition mainAnimation = new SequentialTransition();
-        //initialize the highlight circle to the root node
-        Circle highlightCircle = createHighlightCircle();
-        //get the traversal animation
-        SequentialTransition traversalAnimation = highlightTraversal(highlightCircle, path);
-        //remove the highlight circle from the canvas
-        PauseTransition removeCircle = new PauseTransition(Duration.ONE);
-        removeCircle.setOnFinished(actionEvent->{deleteFromCanvas(highlightCircle);});
-        mainAnimation.getChildren().addAll(traversalAnimation,removeCircle);
+            SequentialTransition mainAnimation = new SequentialTransition();
+            //initialize the highlight circle to the root node
+            Circle highlightCircle = createHighlightCircle();
+            //get the traversal animation
 
-        return mainAnimation;
-
+            SequentialTransition traversalAnimation = highlightTraversal(highlightCircle, (Integer[])path.toArray());
+            //remove the highlight circle from the canvas
+            PauseTransition removeCircle = new PauseTransition(Duration.ONE);
+            removeCircle.setOnFinished(actionEvent -> {
+                deleteFromCanvas(highlightCircle);
+            });
+            mainAnimation.getChildren().addAll(traversalAnimation, removeCircle);
+            return mainAnimation;
     }
+
+    public SequentialTransition makeAlgorithm(int algType)
+    {
+        writeToFile();
+        switch (algType)
+        {
+            case Controller.BREADTH_FIRST_SEARCH:
+                if(sourceChoice==-1)
+                    return null;
+                else
+                {
+                    //call BFS in backend to get an array of path
+                    return searchAnimation();
+                }
+                break;
+
+                case Controller.DEPTH_FIRST_SEARCH:
+                    if(sourceChoice==-1)
+                        return null;
+                    else
+                    {
+                        //call BFS in backend to get an array of path
+                        int[] path;
+                        return searchAnimation(path);
+                    }
+                    break;
+
+                    case
+
+
+        }
+    }
+
+
 
     private void lockAllVertex()
     {
@@ -594,7 +629,7 @@ public class Animator {
         }
     }
 
-    private SequentialTransition highlightTraversal(Circle circle, int[] path)
+    private SequentialTransition highlightTraversal(Circle circle, Integer[] path)
     {
         SequentialTransition mainAnimation = new SequentialTransition();
         final Vertex startingVertex = getVertex(path[0]);

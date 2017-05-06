@@ -26,15 +26,14 @@ public class driver
     public double getSPTCost()
     {return sptCost;}
 
-    public static void main(String[] args) throws IOException{
-       try{
-           driver.BFS("graph.txt",8);
-       }catch (Exception e){
-           System.out.print("Error");
+    public static void main(String[] args) throws IOException {
+       //try{
+           driver.dijkstras("graph.txt",8,2);
+   //}catch (Exception e){
+     //      System.out.print("Error");
        }
        //driver.BFS("graph0.txt",0);
 
-    }
 
     //This program follows the sample output provided
     //greedy(int) is a implementation of Dijkstras's algorithm
@@ -61,22 +60,37 @@ public class driver
         }
         return result;
     }
-    public static ArrayList<Integer> BFS(String str, int start) throws IOException
-    {
-        GreedyGraph m = new GreedyGraph(str);
-        m.greedy(start);
+//    public static ArrayList<Integer> BFS(String str, int start) throws IOException
+//    {
+//        GreedyGraph m = new GreedyGraph(str);
+//        m.greedy(start);
 //        try{
 //            m.greedy(start);
 //        }
 //        catch (Exception e){
 //            System.out.println("Error");
 //        }
+//        GreedyPriorityQueue bfsPath = m.getBFS();
+//        ArrayList<Integer> array = new ArrayList<Integer>();
+//        while(bfsPath.size() > 0)
+//        {
+//            array.add(bfsPath.pop());
+//        }
+//        return array;
+//    }
+
+    public static ArrayList<Integer> BFS(String str, int start) throws IOException
+    {
+        GreedyGraph m = new GreedyGraph(str);
+        m.greedy(start);
         GreedyPriorityQueue bfsPath = m.getBFS();
         ArrayList<Integer> array = new ArrayList<Integer>();
-        while(bfsPath.size() > 0)
+        int size = bfsPath.size();
+        for(int i = 0; i < size; i++)
         {
-            array.add(bfsPath.poll().getIndex());
+            array.add((bfsPath.pop(i).getIndex()));
         }
+        System.out.println(array);
         return array;
     }
     public static ArrayList<Integer> DFS(String str, int start) throws IOException
@@ -110,7 +124,7 @@ public class driver
         }
         return result;
     }
-    public static ArrayList<Integer> dijkstras(String str, int start, int end) throws IOException, Exception
+    public static ArrayList<Integer> dijkstras(String str, int start, int end) throws IOException
     {
         GreedyGraph g = new GreedyGraph(str);
         g.greedy(start);

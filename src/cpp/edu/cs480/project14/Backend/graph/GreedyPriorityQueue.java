@@ -119,4 +119,10 @@ public class GreedyPriorityQueue {
 			b=(b-1)/2;
 		}
 	}
+
+	public GreedyVertex pop(int i)
+	{
+		GreedyVertex v = heap.get(i);
+		return v;
+	}
 }

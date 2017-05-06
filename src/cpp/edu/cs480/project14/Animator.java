@@ -618,7 +618,7 @@ public class Animator {
                 }
                 else
                 {
-                   // return highlightResult(driver.dijkstras(FILE_NAME,sourceChoice,destChoice));
+                   return highlightResult(driver.dijkstras(FILE_NAME,sourceChoice,destChoice));
                 }
                 
 

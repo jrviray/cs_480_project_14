@@ -70,7 +70,7 @@ public class GreedyGraph extends Graph {
 		{
 			if( u == sinkIndex)
 				System.out.println("Sink found");
-				System.exit(1);
+				//System.exit(1);
 				//throw new Exception();
 		}
 		else

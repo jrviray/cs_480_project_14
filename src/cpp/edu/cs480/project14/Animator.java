@@ -248,6 +248,19 @@ public class Animator {
                         deleteFromCanvas(edge);
                         edgeTable[sourceChoice][i] = null;
                     }
+
+                    for(int i=sourceChoice;i<vertexTable.length-1;i++)
+                    {
+                        vertexTable[i]=vertexTable[i+1];
+                        if(getVertex(i)!=null)
+                        getVertex(i).setID(i);
+
+                        for(int j = 0;j<vertexTable.length;j++)
+                        {
+                            edgeTable[i][j] = edgeTable[i+1][j];
+                            edgeTable[j][i] = edgeTable[j][i+1];
+                        }
+                    }
                     cancelSelection();
                 }
             }

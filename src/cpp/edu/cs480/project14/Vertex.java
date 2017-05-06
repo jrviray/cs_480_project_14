@@ -67,6 +67,11 @@ public class Vertex extends Group{
         circle.setStrokeWidth(1f);
     }
 
+    public void setID(int newID)
+    {
+        this.ID = newID;
+    }
+
 
 
 

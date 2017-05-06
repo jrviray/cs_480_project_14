@@ -304,7 +304,7 @@ public class Animator {
             if(dialogButton == ButtonType.OK)
             {
                 if(isDirected==null)
-                isDirected = directedChoice.getValue().equals("directed edge")? true: false;
+                isDirected = directedChoice.getValue().equals("directed graph")? true: false;
 
                 try {
                     Double weight_result = Double.parseDouble(weight.getText());

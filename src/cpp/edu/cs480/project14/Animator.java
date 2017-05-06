@@ -601,7 +601,8 @@ public class Animator {
                 }
                 else
                 {
-                   return highlightResult(driver.dijkstras(FILE_NAME,sourceChoice,destChoice));
+                    return highlightResult(GraphAlgorithm.Dijkstras(writeToArrayGraph(), sourceChoice));
+                   //return highlightResult(driver.dijkstras(FILE_NAME,sourceChoice,destChoice));
                 }
                 
 

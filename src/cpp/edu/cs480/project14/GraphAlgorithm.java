@@ -48,6 +48,54 @@ public class GraphAlgorithm {
 
 
     }
+    
+    public static ArrayList<Integer> Dijkstras(double[][] graph, int source) {
+        double[] dist = new double[graph.length];
+        ArrayList<Integer> pred = new ArrayList<>(graph.length);
+        boolean[] visited = new boolean[graph.length];
+        
+        for(int i = 0; i < dist.length; i++) {
+            dist[i] = Double.MAX_VALUE;
+            pred.add(-1);
+        }
+        dist[source] = 0;
+        
+        
+        for(int i = 0; i < dist.length; i++) {
+            int next = minVertex(dist, visited);
+            if(next == -1) {
+                break;
+            } else {
+                visited[next] = true;
+            }
+            
+            
+            ArrayList<Integer> n = findNeighbors(graph, next);
+            for(int j = 0; j < n.size(); j++) {
+                int v = n.get(j);
+                double d = dist[next] + graph[next][v];
+                if(dist[v] > d) {
+                    dist[v] = d;
+                    pred.set(v, next);
+                }
+            }
+        }
+        System.out.println(pred);
+        return pred;
+    }
+    
+    private static int minVertex(double[] dist, boolean[] v) {
+        double x = Double.MAX_VALUE;
+        int y = -1;
+        for (int i = 0; i < dist.length; i++) {
+            if(!v[i] && dist[i] < x) {
+                y = i;
+                x = dist[i];
+            }
+        }
+        return y;
+    }
+    
 
     private static void DFSUtil(int thisVertexID,boolean[] visited,double[][] graph,ArrayList<Integer> path)
     {
@@ -78,6 +126,6 @@ public class GraphAlgorithm {
         }
         return neighbor;
     }
-
-
+    
+    
 }

@@ -26,11 +26,15 @@ public class driver
     public double getSPTCost()
     {return sptCost;}
 
-//    public static void main(String[] args) throws  IOException{
-//        driver.sptWork("graph0.txt",0,5);
-//       //driver.BFS("graph0.txt",0);
-//
-//    }
+    public static void main(String[] args) throws IOException{
+       try{
+           driver.BFS("graph.txt",8);
+       }catch (Exception e){
+           System.out.print("Error");
+       }
+       //driver.BFS("graph0.txt",0);
+
+    }
 
     //This program follows the sample output provided
     //greedy(int) is a implementation of Dijkstras's algorithm
@@ -38,6 +42,12 @@ public class driver
     {
         MST m = new MST(str);
         m.greedy(start);
+//        try{
+//            m.greedy(start);
+//        }
+//        catch (Exception e){
+//            System.out.println("Error");
+//        }
         Edge[] e = m.getEdges();
         Pair<Integer,Integer>[] result = new Pair[e.length];
         double mstCost = 0.0;
@@ -55,6 +65,12 @@ public class driver
     {
         GreedyGraph m = new GreedyGraph(str);
         m.greedy(start);
+//        try{
+//            m.greedy(start);
+//        }
+//        catch (Exception e){
+//            System.out.println("Error");
+//        }
         GreedyPriorityQueue bfsPath = m.getBFS();
         ArrayList<Integer> array = new ArrayList<Integer>();
         while(bfsPath.size() > 0)
@@ -74,7 +90,13 @@ public class driver
     public static Pair<Integer, Integer>[] sptWork(String str, int start) throws IOException
     {
         SPT s = new SPT(str);
-        s.greedy(start);
+       s.greedy(start);
+//        try{
+//            s.greedy(start);
+//        }
+//        catch (Exception e){
+//            System.out.println("Error");
+//        }
         Edge[] e = s.getEdges();
         double sptCost = 0.0;
         Pair<Integer,Integer>[] result = new Pair[e.length];
@@ -88,10 +110,17 @@ public class driver
         }
         return result;
     }
-    public static ArrayList<Integer> dijkstras(String str, int start, int end) throws IOException
+    public static ArrayList<Integer> dijkstras(String str, int start, int end) throws IOException, Exception
     {
         GreedyGraph g = new GreedyGraph(str);
         g.greedy(start);
+//        try{
+//            g.greedy(start);
+//        }
+//        catch (Exception e){
+//            System.out.print("Sink found.");
+//            throw new Exception();
+//        }
         ArrayList<Integer> dPath = new ArrayList<Integer>();
         while(g.getVertex(start) != g.getVertex(end))
         {

@@ -597,7 +597,7 @@ public class Animator {
                 if(sourceChoice==-1)
                     return null;
                 else
-                    return searchAnimation(driver.BFS(FILE_NAME,sourceChoice));
+             return BFSAnimation(GraphAlgorithm.BFS(writeToArrayGraph(),sourceChoice));
 
             case Controller.DEPTH_FIRST_SEARCH:
                 if(sourceChoice==-1)
@@ -673,6 +673,67 @@ public class Animator {
                 attachListener(getVertex(i));
             }
         }
+    }
+
+
+    /**
+     * This animation is for BFS
+     * @param path
+     * @return
+     */
+    private SequentialTransition BFSAnimation(ArrayList<Integer> path)
+    {
+        cancelSelection();
+        Circle highlightCircle = createHighlightCircle();
+        SequentialTransition mainAnimation = new SequentialTransition();
+
+        int thisVertexID = path.get(0);
+        Vertex thisVertex = getVertex(thisVertexID);
+        thisVertex.highLightCircle();
+        highlightCircle.setTranslateX(thisVertex.getX());
+        highlightCircle.setTranslateY(thisVertex.getY());
+        drawOnCanvas(highlightCircle);
+
+        for(int i = 0; i<path.size();i++)
+        {
+            thisVertexID = path.get(i);
+            SequentialTransition thisVertexTransition = new SequentialTransition();
+            for(int j = 0;j<edgeTable.length;j++)
+            {
+                int destID = j;
+                Edge thisEdge = getEdge(thisVertexID,j);
+                if(thisEdge!=null)
+                {
+                    PauseTransition temp_one = new PauseTransition(Duration.seconds(.5f));
+                    temp_one.setOnFinished(event -> {thisEdge.highLightEdge();
+                    thisEdge.toFront();
+                    getVertex(destID).highLightCircle();
+                            });
+                    PauseTransition temp_two = new PauseTransition(Duration.seconds(1f));
+                    temp_two.setOnFinished(event -> thisEdge.unhighLightEdge());
+                    thisVertexTransition.getChildren().addAll(temp_one,temp_two);
+                }
+            }
+
+            if(i!=(path.size()-1))
+            {
+                Vertex nextVertex = getVertex(path.get(i+1));
+
+            thisVertexTransition.setOnFinished(event -> {
+                highlightCircle.setTranslateX(nextVertex.getX());
+                highlightCircle.setTranslateY(nextVertex.getY());
+                nextVertex.highLightCircle();
+
+            });
+            }
+            else{
+                thisVertexTransition.setOnFinished(event -> {
+                    deleteFromCanvas(highlightCircle);
+                });
+            }
+            mainAnimation.getChildren().add(thisVertexTransition);
+        }
+        return mainAnimation;
     }
 
     private SequentialTransition highlightTraversal(Circle circle, Integer[] path)

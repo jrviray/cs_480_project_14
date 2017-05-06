@@ -10,7 +10,7 @@
  * Uses custom priority queue with "promote" method to recognize decreased vertex cost.
  *
  *
- *
+ * 
  */
 package cpp.edu.cs480.project14.Backend.graph;
 public class GreedyGraph extends Graph {
@@ -18,14 +18,26 @@ public class GreedyGraph extends Graph {
 	private GreedyPriorityQueue q;
     private GreedyPriorityQueue q2;
 	private int components;
-
+    private boolean sink = false;
+    private int sinkIndex = -1;
+	
 // constructor
 	public GreedyGraph(String name) throws java.io.IOException {
 		process_header(name);
 		add_vertices();
 		add_edges();
+        find_sink();
+        
 	}
-
+	public void find_sink()
+    {
+        for(int i = 0; i < order; i++)
+            if(getNeighbors(i).length == 0)
+            {
+                sink = true;
+                sinkIndex = i;
+            }
+    }
 // methods
 	protected void add_vertices() {
 		if(DEBUG)System.out.println("GreedyGraph.add_vertices");
@@ -35,8 +47,13 @@ public class GreedyGraph extends Graph {
 		for (int i=0; i<order; i++) {
 			vertices[i]=new GreedyVertex(i);
 		}
+        for(int i = 0; i < order; i++)
+        {
+            if(vertecies[i].getNeighbors(i).length == 0)
+                
+        }
 	}
-
+	
 /**
  *  Returns vertex of specified index
  *  @return vertex
@@ -52,7 +69,14 @@ public class GreedyGraph extends Graph {
     public GreedyPriorityQueue getBFS()
     {return q2;}
 	public void greedy(int u) {
-		setCost(u,0.0);
+		if(sink)
+        {
+            if( u == sinkIndex)
+                return;
+        }
+        else
+        {
+        setCost(u,0.0);
 		q.add(getVertex(u));
         q2.add(getVertex(u));
 		while (q.size()>0) {
@@ -64,17 +88,18 @@ public class GreedyGraph extends Graph {
 					if (isFringe(w)) {
 						if (newCost(v,w)<costOf(w)) modifyFringe(v,w);
 						// end if newCost
-					}
+					}  
 					else addFringe(v,w);
 					// end if fringe
 				}// end if not marked
 			} // end for
-		} // end while
-
+		}
+        }// end while
+		
 	}  // end greedy
-
+	
 /**
- * Override this method to define formula used to compute new cost of vertex being processed.
+ * Override this method to define formula used to compute new cost of vertex being processed. 
  * Formula depends on problem being solved.
  * @param v vertex being visited
  * @param w vertex being processed
@@ -82,7 +107,7 @@ public class GreedyGraph extends Graph {
 	public double newCost(int v, int w) {
 		return 0.0;
 	}
-
+	
 /**
  * Returns vertex cost
  * @param v vertex
@@ -138,7 +163,7 @@ public class GreedyGraph extends Graph {
 // Modify existing fringe vertex: decrease its cost and change parent, unselect old edge
 // and select new edge connecting it to tree.  Delete & add back to priority queue with new cost.
 	private final void modifyFringe(int v, int w) {
-		if (DEBUG) System.out.println("GreedyGraph:modifyFringe=("+v+","+w+")");
+		if (DEBUG) System.out.println("GreedyGraph:modifyFringe=("+v+","+w+")");	
 	//	select new edge
 		getEdge(v,w).setSelected(true);
 	// unselect old edge

@@ -12,20 +12,32 @@
  *
  * 
  */
-package cpp.edu.cs480.project14.Backend.graph;
+package graph;
 public class GreedyGraph extends Graph {
 	private final boolean DEBUG=false;
 	private GreedyPriorityQueue q;
     private GreedyPriorityQueue q2;
 	private int components;
+    private boolean sink = false;
+    private int sinkIndex = -1;
 	
 // constructor
 	public GreedyGraph(String name) throws java.io.IOException {
 		process_header(name);
 		add_vertices();
 		add_edges();
+        find_sink();
+        
 	}
-	
+	public void find_sink()
+    {
+        for(int i = 0; i < order; i++)
+            if(getNeighbors(i).length == 0)
+            {
+                sink = true;
+                sinkIndex = i;
+            }
+    }
 // methods
 	protected void add_vertices() {
 		if(DEBUG)System.out.println("GreedyGraph.add_vertices");
@@ -35,6 +47,11 @@ public class GreedyGraph extends Graph {
 		for (int i=0; i<order; i++) {
 			vertices[i]=new GreedyVertex(i);
 		}
+        for(int i = 0; i < order; i++)
+        {
+            if(vertecies[i].getNeighbors(i).length == 0)
+                
+        }
 	}
 	
 /**
@@ -52,7 +69,14 @@ public class GreedyGraph extends Graph {
     public GreedyPriorityQueue getBFS()
     {return q2;}
 	public void greedy(int u) {
-		setCost(u,0.0);
+		if(sink)
+        {
+            if( u == sinkIndex)
+                return;
+        }
+        else
+        {
+        setCost(u,0.0);
 		q.add(getVertex(u));
         q2.add(getVertex(u));
 		while (q.size()>0) {
@@ -69,7 +93,8 @@ public class GreedyGraph extends Graph {
 					// end if fringe
 				}// end if not marked
 			} // end for
-		} // end while
+		}
+        }// end while
 		
 	}  // end greedy
 	

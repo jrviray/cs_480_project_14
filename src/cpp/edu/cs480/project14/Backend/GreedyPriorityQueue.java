@@ -1,6 +1,6 @@
 //System.out. LLC
 
-package cpp.edu.cs480.project14.Backend.graph;
+package graph;
 import java.util.*;
 /**
  * Implements heap-based priority queue of vertices with cost
@@ -17,7 +17,7 @@ public class GreedyPriorityQueue {
 	private static final int CAPACITY = 1001;
 	private ArrayList<GreedyVertex> heap;
 	private int[] index;
-	private int counter = 0;
+    private int counter = 0;
 	
 // constructors
 /**
@@ -35,6 +35,11 @@ public class GreedyPriorityQueue {
 		index = new int[capacity];
 		for (int i=0; i<index.length; i++) index[i]=0;
 	}
+    public GreedyVertex pop(int i)
+    {
+        GreedyVertex v = heap.get(i);
+        return v;
+    }
 	
 	// public methods
 /**
@@ -75,6 +80,7 @@ public class GreedyPriorityQueue {
 		siftDown(0);
 		return v;
 	}
+
 	
 /**
  *	Returns the number of elements in priority queue
@@ -120,12 +126,4 @@ public class GreedyPriorityQueue {
 			b=(b-1)/2;
 		}
 	}
-
-	public GreedyVertex pop()
-	{
-		GreedyVertex v = heap.get(counter);
-        heap.remove(counter);
-		counter++;
-		return v;
-}
 }

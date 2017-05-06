@@ -1,12 +1,9 @@
-package cpp.edu.cs480.project14.Backend;
-
-import cpp.edu.cs480.project14.Backend.graph.*;
-import javafx.util.Pair;
-
+import graph.*;
 import java.util.ArrayList;
-import java.util.Collections;
+import java.util.*;
+import javafx.util.*;
 import java.io.*;
-
+import java.lang.Character;
 //Tsend-Ayush Batbileg
 //CS241
 //Project 4 driver file
@@ -25,14 +22,15 @@ public class driver
     {return mstCost;}
     public double getSPTCost()
     {return sptCost;}
-
-    public static void main(String[] args) throws  IOException{
-       // driver.sptWork("graph0.txt",0,5);
-       //driver.BFS("graph0.txt",0);
+    
+    public static void main(String[] args) throws  IOException
+    {
+        // driver.sptWork("graph0.txt",0,5);
+        //driver.BFS("graph0.txt",0);
         driver.BFS("graph.txt", 4);
-
+        
     }
-
+    
     //This program follows the sample output provided
     //greedy(int) is a implementation of Dijkstras's algorithm
     public static Pair<Integer, Integer>[] mstWork(String str, int start, int end) throws IOException
@@ -58,9 +56,10 @@ public class driver
         m.greedy(start);
         GreedyPriorityQueue bfsPath = m.getBFS();
         ArrayList<Integer> array = new ArrayList<Integer>();
-       while(bfsPath.size() > 0)
+        int size = bfsPath.size();
+        for(int i = 0; i < size; i++)
         {
-            array.add((bfsPath.pop().getIndex()));
+            array.add((bfsPath.pop(i).getIndex()));
         }
         return array;
     }
@@ -71,7 +70,7 @@ public class driver
         ArrayList<Integer> dfsPath = d.getPath();
         return dfsPath;
     }
-
+    
     public static Pair<Integer, Integer>[] sptWork(String str, int start, int end) throws IOException
     {
         SPT s = new SPT(str);
@@ -109,7 +108,7 @@ public class driver
         double djkDistance = 0.0;
         for(int i = 0; i < dPath.size() -1; i++)
             djkDistance += g.weightOf(new Edge(dPath.get(i), dPath.get(i+1)));
-            System.out.println(djkDistance);
+        System.out.println(djkDistance);
         return dPath;
     }
 }

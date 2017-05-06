@@ -18,11 +18,14 @@ public class Edge extends Group{
     private Polygon arrow;
     private Text weightText;
     private double weight;
+    private boolean directed;
 
-    public Edge(Vertex source,Vertex destination, double weight)
+    public Edge(Vertex source,Vertex destination, double weight,boolean directed)
     {
         this.weight = weight;
+        this.directed=directed;
         arrow = new Polygon();
+
 
         DoubleBinding lengthBinding = new DoubleBinding() {
 
@@ -102,7 +105,10 @@ public class Edge extends Group{
         rotate.pivotXProperty().bind(source.getXProperty());
         rotate.pivotYProperty().bind(source.getYProperty());
         this.getTransforms().add(rotate);
+        if(directed)
         getChildren().addAll(edgeLine,arrow,weightText);
+        else
+            getChildren().addAll(edgeLine,weightText);
 
     }
 
@@ -124,5 +130,11 @@ public class Edge extends Group{
         edgeLine.setStrokeWidth(1f);
         arrow.setFill(Color.BLACK);
 }
+
+    public void setWeight(double weight)
+    {
+        this.weight = weight;
+        weightText.setText(Double.toString(weight));
+    }
     
 }

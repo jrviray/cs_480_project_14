@@ -11,8 +11,11 @@ public class SaveInfo implements Serializable {
 
     double[][] serialEdgeTable;
 
-    public SaveInfo(Vertex[] vertexTable,Edge[][] edgeTable)
+    Boolean isDirected;
+
+    public SaveInfo(Vertex[] vertexTable,Edge[][] edgeTable,Boolean isDirected)
     {
+        this.isDirected = isDirected;
         //copy the vertex table
             serialVertexTable = new SerialVertex[vertexTable.length];
             for(int i =0;i<serialVertexTable.length;i++)
@@ -55,9 +58,14 @@ public class SaveInfo implements Serializable {
             for(int j =0;j<edgeTable.length;j++)
             {
                 if(serialEdgeTable[i][j]!=0)
-                   edgeTable[i][j] = new Edge(vertexTable[i],vertexTable[j],serialEdgeTable[i][j]);
+                   edgeTable[i][j] = new Edge(vertexTable[i],vertexTable[j],serialEdgeTable[i][j],isDirected);
             }
         }
         return edgeTable;
+    }
+
+    public Boolean getIsDirected()
+    {
+        return isDirected;
     }
 }

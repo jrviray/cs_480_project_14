@@ -1,5 +1,6 @@
 package cpp.edu.cs480.project14;
 
+import javafx.animation.Animation;
 import javafx.animation.PauseTransition;
 import javafx.animation.SequentialTransition;
 import javafx.animation.TranslateTransition;
@@ -17,7 +18,7 @@ import javafx.scene.shape.Circle;
 import javafx.scene.shape.StrokeType;
 import javafx.util.Duration;
 import javafx.util.Pair;
-
+import cpp.edu.cs480.project14.Backend.driver;
 import java.io.*;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -29,7 +30,10 @@ import java.util.Optional;
  */
 public class Animator {
 
+    private final String  FILE_NAME= "graph.txt";
+
     private Pane canvas;
+
 
     private Vertex[] vertexTable;
 
@@ -46,7 +50,7 @@ public class Animator {
 
     private int destChoice;
     
-    private boolean isDirected;
+    private Boolean isDirected;
 
 
     /**
@@ -170,12 +174,12 @@ public class Animator {
             outputControl_no_dest();
         else
         {
-            Pair<Double,Boolean> result = getAddEdgeInfo();
+            Double result = getAddEdgeInfo();
             if(result!=null)
             {
-                changeEdge(sourceChoice,destChoice,result.getKey());
-                if(!result.getValue())
-                    changeEdge(destChoice,sourceChoice,result.getKey());
+                changeEdge(sourceChoice,destChoice,result);
+                if(!isDirected)
+                    changeEdge(destChoice,sourceChoice,result);
                 cancelSelection();
             }
         }
@@ -209,12 +213,14 @@ public class Animator {
         Edge oldEdge = edgeTable[sourceID][destID];
         if(oldEdge!=null)
         {
-            deleteFromCanvas(oldEdge);
+            oldEdge.setWeight(weight);
         }
-        Edge newEdge =  new Edge(vertexTable[sourceID],vertexTable[destID],weight);
-        edgeTable[sourceID][destID] = newEdge;
-        drawOnCanvas(newEdge);
-        newEdge.toBack();
+        else {
+            Edge newEdge = new Edge(vertexTable[sourceID], vertexTable[destID], weight, isDirected);
+            edgeTable[sourceID][destID] = newEdge;
+            drawOnCanvas(newEdge);
+            newEdge.toBack();
+        }
     }
 
 
@@ -245,6 +251,19 @@ public class Animator {
                         deleteFromCanvas(edge);
                         edgeTable[sourceChoice][i] = null;
                     }
+
+                    for(int i=sourceChoice;i<vertexTable.length-1;i++)
+                    {
+                        vertexTable[i]=vertexTable[i+1];
+                        if(getVertex(i)!=null)
+                        getVertex(i).setID(i);
+
+                        for(int j = 0;j<vertexTable.length;j++)
+                        {
+                            edgeTable[i][j] = edgeTable[i+1][j];
+                            edgeTable[j][i] = edgeTable[j][i+1];
+                        }
+                    }
                     cancelSelection();
                 }
             }
@@ -254,9 +273,9 @@ public class Animator {
      * This is an aiding method for get input from the user to add edge
      * @return
      */
-    private Pair<Double,Boolean> getAddEdgeInfo()
+    private Double getAddEdgeInfo()
     {
-        Dialog<Pair<Double,Boolean>> inputDialog = new Dialog<>();
+        Dialog<Double> inputDialog = new Dialog<>();
         Alert alert = new Alert(Alert.AlertType.ERROR); // Moved this outside so i can use it else where
         inputDialog.setTitle("Add New Edge");
         VBox layoutBox = new VBox();
@@ -267,14 +286,24 @@ public class Animator {
         TextField weight = new TextField();
         Label label = new Label("Enter the weight of edge between "+vertexTable[sourceChoice].getContent()+" and "+vertexTable[destChoice].getContent()+":");
         ChoiceBox directedChoice = new ChoiceBox();
-        directedChoice.getItems().addAll("directed edge","undirected edge");
+        directedChoice.getItems().addAll("directed graph","undirected graph");
         directedChoice.getSelectionModel().selectFirst();
-        layoutBox.getChildren().addAll(label,weight,directedChoice);
+
+        if(isDirected!=null)
+        {
+            String indication = isDirected? "a directed" : "an undirected";
+            Label directedLabel = new Label("This is "+indication+" graph.");
+            layoutBox.getChildren().addAll(label,weight,directedLabel);
+        }
+        else {
+            layoutBox.getChildren().addAll(label, weight, directedChoice);
+        }
         inputDialog.getDialogPane().setContent(layoutBox);
         inputDialog.getDialogPane().getButtonTypes().addAll(ButtonType.OK,ButtonType.CANCEL);
         inputDialog.setResultConverter(dialogButton->{
             if(dialogButton == ButtonType.OK)
             {
+                if(isDirected==null)
                 isDirected = directedChoice.getValue().equals("directed edge")? true: false;
 
                 try {
@@ -286,7 +315,7 @@ public class Animator {
                     	alert.showAndWait();
                     	return null;
                     } else  {
-                    	return new Pair<> (weight_result,isDirected);
+                    	return weight_result;
                     }
                    
                 }
@@ -304,7 +333,7 @@ public class Animator {
                 return null;
         });
 
-        Optional<Pair<Double,Boolean>> result = inputDialog.showAndWait();
+        Optional<Double> result = inputDialog.showAndWait();
         return result.isPresent()?result.get():null;
     }
     
@@ -341,7 +370,7 @@ public class Animator {
      */
     protected void writeToFile()
     {
-        try (PrintWriter writer = new PrintWriter("graph.txt", "UTF-8")) {
+        try (PrintWriter writer = new PrintWriter(FILE_NAME, "UTF-8")) {
         	
         	
         	writer.println(vertexCount()  + " " + edgeCount()  + " directed");
@@ -443,7 +472,7 @@ public class Animator {
         if(saveName.isPresent())
         {
             try {
-                SaveInfo saveGraph = new SaveInfo(vertexTable,edgeTable);
+                SaveInfo saveGraph = new SaveInfo(vertexTable,edgeTable,isDirected);
                 FileOutputStream fileSave = new FileOutputStream(saveName.get() + ".dat");
                 ObjectOutputStream dataSave = new ObjectOutputStream(fileSave);
                 dataSave.writeObject(saveGraph);
@@ -502,6 +531,7 @@ public class Animator {
                     fileSave.close();
                     vertexTable = loadGraph.getVertexTable();
                     edgeTable = loadGraph.getEdgeTable(vertexTable);
+                    this.isDirected = loadGraph.getIsDirected();
                     redrawGraph();
 
                 }
@@ -553,52 +583,68 @@ public class Animator {
         return highlightCircle;
     }
 
-    public SequentialTransition searchAnimation(ArrayList<Integer> path)
-    {
-            SequentialTransition mainAnimation = new SequentialTransition();
-            //initialize the highlight circle to the root node
-            Circle highlightCircle = createHighlightCircle();
-            //get the traversal animation
 
-            SequentialTransition traversalAnimation = highlightTraversal(highlightCircle, (Integer[])path.toArray());
-            //remove the highlight circle from the canvas
-            PauseTransition removeCircle = new PauseTransition(Duration.ONE);
-            removeCircle.setOnFinished(actionEvent -> {
-                deleteFromCanvas(highlightCircle);
-            });
-            mainAnimation.getChildren().addAll(traversalAnimation, removeCircle);
-            return mainAnimation;
-    }
 
-    public SequentialTransition makeAlgorithm(int algType)
+    public Animation makeAlgorithm(int algType) throws IOException
     {
         writeToFile();
         switch (algType)
         {
             case Controller.BREADTH_FIRST_SEARCH:
-                if(sourceChoice==-1)
+                if(sourceChoice==-1) {
+                    outputControl_no_source();
                     return null;
+                }
+                else
+             return BFSAnimation(GraphAlgorithm.BFS(writeToArrayGraph(),sourceChoice));
+
+            case Controller.DEPTH_FIRST_SEARCH:
+                if(sourceChoice==-1) {
+                    outputControl_no_source();
+                    return null;
+                }
+                else
+                    return DFSAnimation(GraphAlgorithm.DFS(writeToArrayGraph(),sourceChoice));
+
+            case Controller.DISJKSTRA_PATH:
+                if(sourceChoice==-1 && destChoice==-1)
+                {
+                    outputControl_no_source_dest();
+                    return null;
+                }
+                else if(destChoice==-1)
+                {
+                    outputControl_no_dest();
+                    return null;
+                }
                 else
                 {
-                    //call BFS in backend to get an array of path
-                    return searchAnimation();
+                    return highlightResult(GraphAlgorithm.Dijkstras(writeToArrayGraph(), sourceChoice));
+                   //return highlightResult(driver.dijkstras(FILE_NAME,sourceChoice,destChoice));
                 }
-                break;
+                
 
-                case Controller.DEPTH_FIRST_SEARCH:
-                    if(sourceChoice==-1)
-                        return null;
-                    else
-                    {
-                        //call BFS in backend to get an array of path
-                        int[] path;
-                        return searchAnimation(path);
-                    }
-                    break;
+            case Controller.GREEDY_SHORTEST_PATH:
+                if(sourceChoice==-1)
+                {
+                    outputControl_no_source();
+                    return null;
+                }
+                else
+                {
+                    return highlightResult(driver.sptWork(FILE_NAME,sourceChoice));
+                }
 
-                    case
+                case Controller.MINIMUM_SPANNING_TREE:
+                        try {
+                            return highlightResult(GraphAlgorithm.MST_undirected(writeToArrayGraph()));
+                        }catch (IllegalArgumentException e)
+                        {
+                            outputLabel.setText(e.getMessage());
+                        }
 
-
+                default:
+                    return null;
         }
     }
 
@@ -629,6 +675,87 @@ public class Animator {
         }
     }
 
+
+    /**
+     * This animation is for BFS
+     * @param path
+     * @return
+     */
+    private SequentialTransition BFSAnimation(ArrayList<Integer> path)
+    {
+        cancelSelection();
+        Circle highlightCircle = createHighlightCircle();
+        SequentialTransition mainAnimation = new SequentialTransition();
+
+        int thisVertexID = path.get(0);
+        Vertex thisVertex = getVertex(thisVertexID);
+        thisVertex.highLightCircle();
+        highlightCircle.setTranslateX(thisVertex.getX());
+        highlightCircle.setTranslateY(thisVertex.getY());
+        drawOnCanvas(highlightCircle);
+
+        for(int i = 0; i<path.size();i++)
+        {
+            thisVertexID = path.get(i);
+            SequentialTransition thisVertexTransition = new SequentialTransition();
+            for(int j = 0;j<edgeTable.length;j++)
+            {
+                int destID = j;
+                Edge thisEdge = getEdge(thisVertexID,j);
+                if(thisEdge!=null)
+                {
+                    PauseTransition temp_one = new PauseTransition(Duration.seconds(.5f));
+                    temp_one.setOnFinished(event -> {thisEdge.highLightEdge();
+                    thisEdge.toFront();
+                    getVertex(destID).highLightCircle();
+                            });
+                    PauseTransition temp_two = new PauseTransition(Duration.seconds(1f));
+                    temp_two.setOnFinished(event -> thisEdge.unhighLightEdge());
+                    thisVertexTransition.getChildren().addAll(temp_one,temp_two);
+                }
+            }
+
+            if(i!=(path.size()-1))
+            {
+                Vertex nextVertex = getVertex(path.get(i+1));
+
+            thisVertexTransition.setOnFinished(event -> {
+                highlightCircle.setTranslateX(nextVertex.getX());
+                highlightCircle.setTranslateY(nextVertex.getY());
+                nextVertex.highLightCircle();
+
+            });
+            }
+            else{
+                thisVertexTransition.setOnFinished(event -> {
+                    deleteFromCanvas(highlightCircle);
+                });
+            }
+            mainAnimation.getChildren().add(thisVertexTransition);
+        }
+        return mainAnimation;
+    }
+
+    public SequentialTransition DFSAnimation(ArrayList<Integer> path)
+    {
+        cancelSelection();
+        SequentialTransition mainAnimation = new SequentialTransition();
+        //initialize the highlight circle to the root node
+        Circle highlightCircle = createHighlightCircle();
+        //get the traversal animation
+
+        Integer[] pathArray = new Integer[path.size()];
+        path.toArray(pathArray);
+        SequentialTransition traversalAnimation = highlightTraversal(highlightCircle, pathArray);
+        //remove the highlight circle from the canvas
+        PauseTransition removeCircle = new PauseTransition(Duration.ONE);
+        removeCircle.setOnFinished(actionEvent -> {
+            deleteFromCanvas(highlightCircle);
+        });
+        mainAnimation.getChildren().addAll(traversalAnimation, removeCircle);
+        return mainAnimation;
+    }
+
     private SequentialTransition highlightTraversal(Circle circle, Integer[] path)
     {
         SequentialTransition mainAnimation = new SequentialTransition();
@@ -641,9 +768,7 @@ public class Animator {
         drawCircle.setOnFinished(actionEvent->{drawOnCanvas(circle);
         lockAllVertex();});
         mainAnimation.getChildren().add(drawCircle);
-        
-        
-        
+
         for (int i = 1; i < path.length; i++) {
             Vertex nextVertex = getVertex(path[i]);
             mainAnimation.getChildren().addAll(new PauseTransition(Duration.seconds(.5f)),
@@ -679,7 +804,75 @@ public class Animator {
                     jEdge.unhighLightEdge();
             }
         }
+    }
+
+    private PauseTransition highlightResult(Pair<Integer,Integer>[] path)
+    {
+
+        cancelSelection();
+        if(path==null)
+            return null;
+        else {
+            PauseTransition mainAnimation = new PauseTransition(Duration.ONE);
+            for (Pair<Integer, Integer> thisEdge : path) {
+                if (thisEdge != null) {
+                    int sourceID = thisEdge.getKey();
+                    int destID = thisEdge.getValue();
+                    getEdge(sourceID, destID).highLightEdge();
+                    getEdge(sourceID, destID).toFront();
+                    getVertex(sourceID).highLightCircle();
+                    getVertex(destID).highLightCircle();
+                }
+            }
+            return mainAnimation;
+        }
+    }
+
+    private PauseTransition highlightResult(ArrayList<Integer> path)
+    {
 
 
+        if(path==null) {
+            cancelSelection();
+            return null;
+        }
+        else {
+            getEdge(sourceChoice,path.get(0)).highLightEdge();
+            getEdge(sourceChoice,path.get(0)).toFront();
+            getVertex(sourceChoice).highLightCircle();
+            PauseTransition mainAnimation = new PauseTransition(Duration.ONE);
+            cancelSelection();
+            for (int i = 0; i < path.size() - 1; i++) {
+                int sourceID = path.get(i);
+                int destID = path.get(i+1);
+                getEdge(sourceID, destID).highLightEdge();
+                getEdge(sourceID, destID).toFront();
+                getVertex(sourceID).highLightCircle();
+                getVertex(destID).highLightCircle();
+            }
+            return mainAnimation;
+        }
+    }
+
+    private void outputControl_totalCost(double cost)
+    {
+        outputLabel.setText("Total cost is: "+cost);
+    }
+
+    private double[][] writeToArrayGraph()
+    {
+        int size = vertexCount();
+        double[][] newTable = new double[size][size];
+        for(int i=0;i<size;i++)
+        {
+            for(int j=0;j<size;j++)
+            {
+                if(getEdge(i,j)==null)
+                    newTable[i][j] = Double.MAX_VALUE;
+                else
+                    newTable[i][j] = getEdge(i,j).getWeight();
+            }
+        }
+        return newTable;
     }
 }

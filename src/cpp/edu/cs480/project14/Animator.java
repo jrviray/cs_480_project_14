@@ -620,6 +620,7 @@ public class Animator {
                 {
                     return highlightResult(driver.dijkstras(FILE_NAME,sourceChoice,destChoice));
                 }
+                
 
             case Controller.GREEDY_SHORTEST_PATH:
                 if(sourceChoice==-1)
@@ -729,41 +730,64 @@ public class Animator {
 
     private PauseTransition highlightResult(Pair<Integer,Integer>[] path)
     {
+
         cancelSelection();
-        PauseTransition mainAnimation = new PauseTransition(Duration.ONE);
-        for (Pair<Integer,Integer> thisEdge: path)
-        {
-            if(thisEdge!=null)
-            {
-                int sourceID = thisEdge.getKey();
-                int destID = thisEdge.getValue();
-                getEdge(sourceID,destID).highLightEdge();
-                getEdge(sourceID,destID).toFront();
-                getVertex(sourceID).highLightCircle();
-                getVertex(destID).highLightCircle();
+        if(path==null)
+            return null;
+        else {
+            PauseTransition mainAnimation = new PauseTransition(Duration.ONE);
+            for (Pair<Integer, Integer> thisEdge : path) {
+                if (thisEdge != null) {
+                    int sourceID = thisEdge.getKey();
+                    int destID = thisEdge.getValue();
+                    getEdge(sourceID, destID).highLightEdge();
+                    getEdge(sourceID, destID).toFront();
+                    getVertex(sourceID).highLightCircle();
+                    getVertex(destID).highLightCircle();
+                }
             }
+            return mainAnimation;
         }
-        return mainAnimation;
     }
 
     private PauseTransition highlightResult(ArrayList<Integer> path)
     {
         cancelSelection();
-        PauseTransition mainAnimation = new PauseTransition(Duration.ONE);
-        for(int i =0;i<path.size()-1;i++)
-        {
-            int sourceID = path.get(i);
-            int destID = path.get(i+1);
-            getEdge(sourceID,destID).highLightEdge();
-            getEdge(sourceID,destID).toFront();
-            getVertex(sourceID).highLightCircle();
-            getVertex(destID).highLightCircle();
+        if(path==null)
+            return null;
+        else {
+            PauseTransition mainAnimation = new PauseTransition(Duration.ONE);
+            for (int i = 0; i < path.size() - 1; i++) {
+                int sourceID = path.get(i+1);
+                int destID = path.get(i);
+                getEdge(sourceID, destID).highLightEdge();
+                getEdge(sourceID, destID).toFront();
+                getVertex(sourceID).highLightCircle();
+                getVertex(destID).highLightCircle();
+            }
+            return mainAnimation;
         }
-        return mainAnimation;
     }
 
     private void outputControl_totalCost(double cost)
     {
         outputLabel.setText("Total cost is: "+cost);
+    }
+
+    private double[][] writeToArrayGraph()
+    {
+        int size = vertexCount();
+        double[][] newTable = new double[size][size];
+        for(int i=0;i<size;i++)
+        {
+            for(int j=0;j<size;j++)
+            {
+                if(getEdge(i,j)==null)
+                    newTable[i][j] = Double.MAX_VALUE;
+                else
+                    newTable[i][j] = getEdge(i,j).getWeight();
+            }
+        }
+        return newTable;
     }
 }

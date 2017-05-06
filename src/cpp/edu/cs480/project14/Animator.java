@@ -569,24 +569,7 @@ public class Animator {
         return highlightCircle;
     }
 
-    public SequentialTransition searchAnimation(ArrayList<Integer> path)
-    {
-            SequentialTransition mainAnimation = new SequentialTransition();
-            //initialize the highlight circle to the root node
-            Circle highlightCircle = createHighlightCircle();
-            //get the traversal animation
 
-            Integer[] pathArray = new Integer[path.size()];
-            path.toArray(pathArray);
-            SequentialTransition traversalAnimation = highlightTraversal(highlightCircle, pathArray);
-            //remove the highlight circle from the canvas
-            PauseTransition removeCircle = new PauseTransition(Duration.ONE);
-            removeCircle.setOnFinished(actionEvent -> {
-                deleteFromCanvas(highlightCircle);
-            });
-            mainAnimation.getChildren().addAll(traversalAnimation, removeCircle);
-            return mainAnimation;
-    }
 
     public Animation makeAlgorithm(int algType) throws IOException
     {
@@ -603,7 +586,7 @@ public class Animator {
                 if(sourceChoice==-1)
                     return null;
                 else
-                    return searchAnimation(driver.DFS(FILE_NAME,sourceChoice));
+                    return DFSAnimation(GraphAlgorithm.DFS(writeToArrayGraph(),sourceChoice));
 
             case Controller.DISJKSTRA_PATH:
                 if(sourceChoice==-1 && destChoice==-1)
@@ -736,9 +719,28 @@ public class Animator {
         return mainAnimation;
     }
 
-    private SequentialTransition highlightTraversal(Circle circle, Integer[] path)
+    public SequentialTransition DFSAnimation(ArrayList<Integer> path)
     {
         cancelSelection();
+        SequentialTransition mainAnimation = new SequentialTransition();
+        //initialize the highlight circle to the root node
+        Circle highlightCircle = createHighlightCircle();
+        //get the traversal animation
+
+        Integer[] pathArray = new Integer[path.size()];
+        path.toArray(pathArray);
+        SequentialTransition traversalAnimation = highlightTraversal(highlightCircle, pathArray);
+        //remove the highlight circle from the canvas
+        PauseTransition removeCircle = new PauseTransition(Duration.ONE);
+        removeCircle.setOnFinished(actionEvent -> {
+            deleteFromCanvas(highlightCircle);
+        });
+        mainAnimation.getChildren().addAll(traversalAnimation, removeCircle);
+        return mainAnimation;
+    }
+
+    private SequentialTransition highlightTraversal(Circle circle, Integer[] path)
+    {
         SequentialTransition mainAnimation = new SequentialTransition();
         final Vertex startingVertex = getVertex(path[0]);
         startingVertex.highLightCircle();
@@ -749,9 +751,7 @@ public class Animator {
         drawCircle.setOnFinished(actionEvent->{drawOnCanvas(circle);
         lockAllVertex();});
         mainAnimation.getChildren().add(drawCircle);
-        
-        
-        
+
         for (int i = 1; i < path.length; i++) {
             Vertex nextVertex = getVertex(path[i]);
             mainAnimation.getChildren().addAll(new PauseTransition(Duration.seconds(.5f)),

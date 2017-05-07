@@ -451,6 +451,9 @@ public class Animator {
 
         cancelButton.setVisible(true);
     }
+    private void outputControl_no_path() {
+        outputLabel.setText("No path was found bewteen your source node " + vertexTable[sourceChoice].getContent() + " and your destination node " + vertexTable[destChoice].getContent());
+    }
 
     private void cancelSelection()
     {
@@ -636,7 +639,13 @@ public class Animator {
                 }
                 else
                 {
-                    return highlightResult(GraphAlgorithm.Dijkstras(writeToArrayGraph(), sourceChoice, destChoice));
+                    try{
+                        return highlightResult(GraphAlgorithm.Dijkstras(writeToArrayGraph(), sourceChoice, destChoice));
+                    } catch(IllegalArgumentException e) {
+                        System.out.println(e.getMessage());
+                        outputLabel.setText(e.getMessage());
+                    }
+                    
                 }
                 
 

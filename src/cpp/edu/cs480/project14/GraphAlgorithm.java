@@ -1,8 +1,6 @@
 package cpp.edu.cs480.project14;
 
-import javafx.animation.PauseTransition;
 import javafx.util.Pair;
-
 import java.util.ArrayList;
 import java.util.LinkedList;
 
@@ -49,7 +47,7 @@ public class GraphAlgorithm {
 
     }
     
-    public static ArrayList<Integer> Dijkstras(double[][] graph, int source, int goal) {
+    public static ArrayList<Integer> Dijkstras(double[][] graph, int source, int goal) throws IllegalArgumentException {
         ArrayList<Integer> prev = new ArrayList<>(graph.length);
         double[] dist = new double[graph.length];
         boolean[] visited = new boolean[graph.length];
@@ -81,7 +79,13 @@ public class GraphAlgorithm {
           
         }
         ArrayList<Integer> ret = new ArrayList<Integer>();
-        return printPath(prev, ret, goal);
+        ret = printPath(prev, ret, goal);
+        if(ret.size() == 0) {
+            throw new IllegalArgumentException("No path found");
+        }
+        else {
+            return ret;
+        }
     }
     private static ArrayList<Integer> printPath(ArrayList<Integer> parent, ArrayList<Integer> output, int j) {
         if(parent.get(j) != -1) {

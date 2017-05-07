@@ -655,23 +655,28 @@ public class Animator {
                     outputControl_no_source();
                     return null;
                 }
-                else
+                else if (destChoice == -1)
                 {
+                    outputControl_no_dest();
+                    return null;
+                }
+
+                else{
                     return highlightResult(GraphAlgorithm.GreedyNonOptimal(writeToArrayGraph(), sourceChoice, destChoice));
                 }
 
-                case Controller.MINIMUM_SPANNING_TREE:
-                        try {
-                            return highlightResult(GraphAlgorithm.MST_undirected(writeToArrayGraph()));
-                        }catch (IllegalArgumentException e)
-                        {
-                            cancelSelection();
-                            outputLabel.setText(e.getMessage());
-                            return null;
-                        }
+            case Controller.MINIMUM_SPANNING_TREE:
+                    try {
+                        return highlightResult(GraphAlgorithm.MST_undirected(writeToArrayGraph()));
+                    }catch (IllegalArgumentException e)
+                    {
+                        cancelSelection();
+                        outputLabel.setText(e.getMessage());
+                        return null;
+                    }
 
-                default:
-                    return null;
+            default:
+                return null;
         }
     }
 
@@ -871,8 +876,9 @@ public class Animator {
             PauseTransition mainAnimation = new PauseTransition(Duration.ONE);
             cancelSelection();
             sourceVertex.highLightCircle();
-            for (int i = 0; i < path.size() - 1; i++) {
-                int sourceID = path.get(i);
+            for (int i = -1; i < path.size() - 1; i++) {
+
+                int sourceID = i==-1?sourceVertex.getID():path.get(i);
                 int destID = path.get(i+1);
                 getEdge(sourceID, destID).highLightEdge();
                 getEdge(sourceID, destID).toFront();

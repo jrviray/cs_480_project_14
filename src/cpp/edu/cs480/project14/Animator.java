@@ -34,6 +34,7 @@ public class Animator {
 
     private Pane canvas;
 
+
     private Vertex[] vertexTable;
 
     private Edge[][] edgeTable;
@@ -49,7 +50,7 @@ public class Animator {
 
     private int destChoice;
     
-    private boolean isDirected;
+    private Boolean isDirected;
 
 
     /**
@@ -173,12 +174,12 @@ public class Animator {
             outputControl_no_dest();
         else
         {
-            Pair<Double,Boolean> result = getAddEdgeInfo();
+            Double result = getAddEdgeInfo();
             if(result!=null)
             {
-                changeEdge(sourceChoice,destChoice,result.getKey());
-                if(!result.getValue())
-                    changeEdge(destChoice,sourceChoice,result.getKey());
+                changeEdge(sourceChoice,destChoice,result);
+                if(!isDirected)
+                    changeEdge(destChoice,sourceChoice,result);
                 cancelSelection();
             }
         }
@@ -198,11 +199,28 @@ public class Animator {
             Edge selectedEdge = edgeTable[sourceChoice][destChoice];
             deleteFromCanvas(selectedEdge);
             edgeTable[sourceChoice][destChoice] = null;
-            selectedEdge = edgeTable[destChoice][sourceChoice];
-            deleteFromCanvas(selectedEdge);
-            edgeTable[destChoice][sourceChoice] = null;
+            if(!isDirected) {
+                selectedEdge = edgeTable[destChoice][sourceChoice];
+                deleteFromCanvas(selectedEdge);
+                edgeTable[destChoice][sourceChoice] = null;
+            }
+            
+            if(isEmpty(edgeTable)) isDirected = null;
+            
             cancelSelection();
         }
+    }
+    
+    private boolean isEmpty(Edge[][] table) {
+    	boolean empty = true;
+    	for (int i  = 0; i < table.length; i++) {
+    		for (int j = 0; j < table.length; j++) {
+    			if (table[i][j] != null) {
+    				empty = false;
+    			}
+    		}
+    	}
+    	return empty;
     }
 
 
@@ -212,12 +230,14 @@ public class Animator {
         Edge oldEdge = edgeTable[sourceID][destID];
         if(oldEdge!=null)
         {
-            deleteFromCanvas(oldEdge);
+            oldEdge.setWeight(weight);
         }
-        Edge newEdge =  new Edge(vertexTable[sourceID],vertexTable[destID],weight);
-        edgeTable[sourceID][destID] = newEdge;
-        drawOnCanvas(newEdge);
-        newEdge.toBack();
+        else {
+            Edge newEdge = new Edge(vertexTable[sourceID], vertexTable[destID], weight, isDirected);
+            edgeTable[sourceID][destID] = newEdge;
+            drawOnCanvas(newEdge);
+            newEdge.toBack();
+        }
     }
 
 
@@ -270,9 +290,9 @@ public class Animator {
      * This is an aiding method for get input from the user to add edge
      * @return
      */
-    private Pair<Double,Boolean> getAddEdgeInfo()
+    private Double getAddEdgeInfo()
     {
-        Dialog<Pair<Double,Boolean>> inputDialog = new Dialog<>();
+        Dialog<Double> inputDialog = new Dialog<>();
         Alert alert = new Alert(Alert.AlertType.ERROR); // Moved this outside so i can use it else where
         inputDialog.setTitle("Add New Edge");
         VBox layoutBox = new VBox();
@@ -283,15 +303,25 @@ public class Animator {
         TextField weight = new TextField();
         Label label = new Label("Enter the weight of edge between "+vertexTable[sourceChoice].getContent()+" and "+vertexTable[destChoice].getContent()+":");
         ChoiceBox directedChoice = new ChoiceBox();
-        directedChoice.getItems().addAll("directed edge","undirected edge");
+        directedChoice.getItems().addAll("directed graph","undirected graph");
         directedChoice.getSelectionModel().selectFirst();
-        layoutBox.getChildren().addAll(label,weight,directedChoice);
+
+        if(isDirected!=null)
+        {
+            String indication = isDirected? "a directed" : "an undirected";
+            Label directedLabel = new Label("This is "+indication+" graph.");
+            layoutBox.getChildren().addAll(label,weight,directedLabel);
+        }
+        else {
+            layoutBox.getChildren().addAll(label, weight, directedChoice);
+        }
         inputDialog.getDialogPane().setContent(layoutBox);
         inputDialog.getDialogPane().getButtonTypes().addAll(ButtonType.OK,ButtonType.CANCEL);
         inputDialog.setResultConverter(dialogButton->{
             if(dialogButton == ButtonType.OK)
             {
-                isDirected = directedChoice.getValue().equals("directed edge")? true: false;
+                if(isDirected==null)
+                isDirected = directedChoice.getValue().equals("directed graph")? true: false;
 
                 try {
                     Double weight_result = Double.parseDouble(weight.getText());
@@ -302,7 +332,7 @@ public class Animator {
                     	alert.showAndWait();
                     	return null;
                     } else  {
-                    	return new Pair<> (weight_result,isDirected);
+                    	return weight_result;
                     }
                    
                 }
@@ -320,7 +350,7 @@ public class Animator {
                 return null;
         });
 
-        Optional<Pair<Double,Boolean>> result = inputDialog.showAndWait();
+        Optional<Double> result = inputDialog.showAndWait();
         return result.isPresent()?result.get():null;
     }
     
@@ -459,7 +489,7 @@ public class Animator {
         if(saveName.isPresent())
         {
             try {
-                SaveInfo saveGraph = new SaveInfo(vertexTable,edgeTable);
+                SaveInfo saveGraph = new SaveInfo(vertexTable,edgeTable,isDirected);
                 FileOutputStream fileSave = new FileOutputStream(saveName.get() + ".dat");
                 ObjectOutputStream dataSave = new ObjectOutputStream(fileSave);
                 dataSave.writeObject(saveGraph);
@@ -518,6 +548,7 @@ public class Animator {
                     fileSave.close();
                     vertexTable = loadGraph.getVertexTable();
                     edgeTable = loadGraph.getEdgeTable(vertexTable);
+                    this.isDirected = loadGraph.getIsDirected();
                     redrawGraph();
 
                 }
@@ -577,14 +608,18 @@ public class Animator {
         switch (algType)
         {
             case Controller.BREADTH_FIRST_SEARCH:
-                if(sourceChoice==-1)
+                if(sourceChoice==-1) {
+                    outputControl_no_source();
                     return null;
+                }
                 else
              return BFSAnimation(GraphAlgorithm.BFS(writeToArrayGraph(),sourceChoice));
 
             case Controller.DEPTH_FIRST_SEARCH:
-                if(sourceChoice==-1)
+                if(sourceChoice==-1) {
+                    outputControl_no_source();
                     return null;
+                }
                 else
                     return DFSAnimation(GraphAlgorithm.DFS(writeToArrayGraph(),sourceChoice));
 
@@ -617,15 +652,13 @@ public class Animator {
                 }
 
                 case Controller.MINIMUM_SPANNING_TREE:
-                    if(sourceChoice==-1)
-                    {
-                        outputControl_no_source();
-                        return null;
-                    }
-                    else
-                    {
-                        return highlightResult(driver.mstWork(FILE_NAME,sourceChoice));
-                    }
+                        try {
+                            return highlightResult(GraphAlgorithm.MST_undirected(writeToArrayGraph()));
+                        }catch (IllegalArgumentException e)
+                        {
+                            outputLabel.setText(e.getMessage());
+                        }
+
                 default:
                     return null;
         }
@@ -681,6 +714,7 @@ public class Animator {
         {
             thisVertexID = path.get(i);
             SequentialTransition thisVertexTransition = new SequentialTransition();
+            thisVertexTransition.getChildren().add(new PauseTransition(Duration.seconds(.5f)));
             for(int j = 0;j<edgeTable.length;j++)
             {
                 int destID = j;

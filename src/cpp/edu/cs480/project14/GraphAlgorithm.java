@@ -51,17 +51,24 @@ public class GraphAlgorithm {
         int temp = source;
         while(temp != goal){
             ArrayList<Integer> neighbors = findNeighbors(graph, temp);
-            int u = minVertex(neighbors);
-            ret.add(u);
-            temp = u;
+            int u = minVertex(neighbors, graph, temp);
+            if(u == -1) {
+                throw new IllegalArgumentException("Did not find next min neighbor");
+            }
+            else {
+                ret.add(u);
+                temp = u;
+            }
         }
         return ret;
     }
-    public static int minVertex(ArrayList<Integer> a) {
-        int low = Integer.MAX_VALUE;
+    public static int minVertex(ArrayList<Integer> a, double[][] graph, int source) {
+        int low = -1;
+        double y = Integer.MAX_VALUE;
         for(int b : a) {
-            if(low > b) {
+            if(graph[source][b] < y) {
                 low = b;
+                y = graph[source][b];
             }
         }
         return low;

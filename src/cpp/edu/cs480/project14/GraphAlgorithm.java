@@ -51,22 +51,29 @@ public class GraphAlgorithm {
         int temp = source;
         while(temp != goal){
             ArrayList<Integer> neighbors = findNeighbors(graph, temp);
-            int u = minVertex(neighbors, graph, temp);
+            int u = minVertex(neighbors, graph, temp, goal);
             if(u == -1) {
                 throw new IllegalArgumentException("No path found");
             }
             else {
                 ret.add(u);
-                temp = u;
+                
             }
+            temp = u;
         }
         return ret;
     }
-    public static int minVertex(ArrayList<Integer> a, double[][] graph, int source) {
+    //returns integer ID of next lowest weighted neighbor, regardless if it can reach the goal.
+    //if neighbor contains goal, it returns goal.
+    public static int minVertex(ArrayList<Integer> a, double[][] graph, int source, int goal) {
         int low = -1;
         double y = Integer.MAX_VALUE;
         for(int b : a) {
-            if(graph[source][b] < y) {
+            if(b == goal) {
+                low = b;
+                break;
+            }
+            else if(graph[source][b] < y) {
                 low = b;
                 y = graph[source][b];
             }

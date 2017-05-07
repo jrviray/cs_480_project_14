@@ -120,10 +120,13 @@ public class driver
             if(e[i].isSelected())
             {
                 result[i] = new Pair<>(e[i].getU(),e[i].getV());
-            }
         }
         return result;
+        
     }
+        return result;
+    }
+
     public static ArrayList<Integer> dijkstras(String str, int start, int end) throws IOException
     {
         GreedyGraph g = new GreedyGraph(str);

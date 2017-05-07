@@ -204,8 +204,23 @@ public class Animator {
                 deleteFromCanvas(selectedEdge);
                 edgeTable[destChoice][sourceChoice] = null;
             }
+            
+            if(isEmpty(edgeTable)) isDirected = null;
+            
             cancelSelection();
         }
+    }
+    
+    private boolean isEmpty(Edge[][] table) {
+    	boolean empty = true;
+    	for (int i  = 0; i < table.length; i++) {
+    		for (int j = 0; j < table.length; j++) {
+    			if (table[i][j] != null) {
+    				empty = false;
+    			}
+    		}
+    	}
+    	return empty;
     }
 
 

@@ -623,7 +623,7 @@ public class Animator {
                 else
                     return DFSAnimation(GraphAlgorithm.DFS(writeToArrayGraph(),sourceChoice));
 
-            case Controller.DISJKSTRA_PATH:
+            case Controller.DIJKSTRA_PATH:
                 if(sourceChoice==-1 && destChoice==-1)
                 {
                     outputControl_no_source_dest();
@@ -656,6 +656,7 @@ public class Animator {
                             return highlightResult(GraphAlgorithm.MST_undirected(writeToArrayGraph()));
                         }catch (IllegalArgumentException e)
                         {
+                            System.out.print(e.getMessage());
                             outputLabel.setText(e.getMessage());
                         }
 

@@ -21,7 +21,7 @@ public class Controller extends Application {
     public static final int BREADTH_FIRST_SEARCH=0;
     public static final int DEPTH_FIRST_SEARCH=1;
     public static final int GREEDY_SHORTEST_PATH = 3;
-    public static final int DISJKSTRA_PATH=4;
+    public static final int DIJKSTRA_PATH=4;
     public static  final int MINIMUM_SPANNING_TREE=5;
 
 

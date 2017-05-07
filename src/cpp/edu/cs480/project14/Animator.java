@@ -199,9 +199,11 @@ public class Animator {
             Edge selectedEdge = edgeTable[sourceChoice][destChoice];
             deleteFromCanvas(selectedEdge);
             edgeTable[sourceChoice][destChoice] = null;
-            selectedEdge = edgeTable[destChoice][sourceChoice];
-            deleteFromCanvas(selectedEdge);
-            edgeTable[destChoice][sourceChoice] = null;
+            if(!isDirected) {
+                selectedEdge = edgeTable[destChoice][sourceChoice];
+                deleteFromCanvas(selectedEdge);
+                edgeTable[destChoice][sourceChoice] = null;
+            }
             cancelSelection();
         }
     }
@@ -698,6 +700,7 @@ public class Animator {
         {
             thisVertexID = path.get(i);
             SequentialTransition thisVertexTransition = new SequentialTransition();
+            thisVertexTransition.getChildren().add(new PauseTransition(Duration.seconds(.5f)));
             for(int j = 0;j<edgeTable.length;j++)
             {
                 int destID = j;

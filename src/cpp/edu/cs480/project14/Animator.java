@@ -868,9 +868,10 @@ public class Animator {
         else {
             getEdge(sourceChoice,path.get(0)).highLightEdge();
             getEdge(sourceChoice,path.get(0)).toFront();
-            getVertex(sourceChoice).highLightCircle();
+            Vertex sourceVertex=getVertex(sourceChoice);
             PauseTransition mainAnimation = new PauseTransition(Duration.ONE);
             cancelSelection();
+            sourceVertex.highLightCircle();
             for (int i = 0; i < path.size() - 1; i++) {
                 int sourceID = path.get(i);
                 int destID = path.get(i+1);

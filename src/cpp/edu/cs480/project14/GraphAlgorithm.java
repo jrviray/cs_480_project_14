@@ -53,7 +53,7 @@ public class GraphAlgorithm {
             ArrayList<Integer> neighbors = findNeighbors(graph, temp);
             int u = minVertex(neighbors, graph, temp);
             if(u == -1) {
-                throw new IllegalArgumentException("Did not find next min neighbor");
+                throw new IllegalArgumentException("No path found");
             }
             else {
                 ret.add(u);

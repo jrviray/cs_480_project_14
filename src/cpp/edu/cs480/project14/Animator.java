@@ -662,7 +662,14 @@ public class Animator {
                 }
 
                 else{
-                    return highlightResult(GraphAlgorithm.GreedyNonOptimal(writeToArrayGraph(), sourceChoice, destChoice));
+                    try{
+                        return highlightResult(GraphAlgorithm.GreedyNonOptimal(writeToArrayGraph(), sourceChoice, destChoice));
+                    } catch(IllegalArgumentException e) {
+                        cancelSelection();
+                        outputLabel.setText(e.getMessage());
+                        return null;
+                    }
+                    
                 }
 
             case Controller.MINIMUM_SPANNING_TREE:

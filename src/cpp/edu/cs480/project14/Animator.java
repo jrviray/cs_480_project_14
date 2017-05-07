@@ -641,11 +641,12 @@ public class Animator {
                 {
                     try{
                         return highlightResult(GraphAlgorithm.Dijkstras(writeToArrayGraph(), sourceChoice, destChoice));
-                    } catch(IllegalArgumentException e) {
-                        System.out.println(e.getMessage());
+                    } catch(IllegalArgumentException e)
+                    {
+                        cancelSelection();
                         outputLabel.setText(e.getMessage());
+                        return null;
                     }
-                    
                 }
                 
 
@@ -665,8 +666,9 @@ public class Animator {
                             return highlightResult(GraphAlgorithm.MST_undirected(writeToArrayGraph()));
                         }catch (IllegalArgumentException e)
                         {
-                            System.out.print(e.getMessage());
+                            cancelSelection();
                             outputLabel.setText(e.getMessage());
+                            return null;
                         }
 
                 default:

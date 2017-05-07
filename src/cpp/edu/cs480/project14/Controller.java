@@ -29,7 +29,7 @@ public class Controller extends Application {
     private double mainPaneWidth = 1600;
     private double mainPaneHeight = 800;
     private Pane canvas;
-    private Button addVertex,operate,save,load,addEdge,deleteEdge,deleteVertex,clear_output;
+    private Button addVertex,operate,save,load,addEdge,deleteEdge,deleteVertex,clear_output,reset_graph;
     private ChoiceBox algChoice;
     private int algorithmType;
     private Animator animator;
@@ -76,6 +76,8 @@ public class Controller extends Application {
         clear_output = new Button("clear output");
         clear_output.setDisable(true);
         clear_output.setOnMouseClicked(mouseEvent -> {animator.clearOutput();clear_output.setDisable(true);});
+        reset_graph = new Button("reset graph");
+        reset_graph.setOnMouseClicked(event -> {animator.resetGraph();clear_output.setDisable(true);});
 
 
 
@@ -93,7 +95,7 @@ public class Controller extends Application {
         operate = new Button("operate algorithm");
         operate.setOnMouseClicked(
                 event -> {doAlgorithm();});
-        leftPane.getChildren().addAll(addVertex,deleteVertex,addEdge,deleteEdge,algChoice,operate,clear_output);
+        leftPane.getChildren().addAll(addVertex,deleteVertex,addEdge,deleteEdge,algChoice,operate,clear_output,reset_graph);
         
 
 
@@ -126,10 +128,13 @@ public class Controller extends Application {
     private void doAlgorithm()
     {
         try {
+
             Animation mainAnimation = animator.makeAlgorithm(algorithmType);
             if(mainAnimation!=null) {
+                reset_graph.setDisable(true);
                 mainAnimation.setOnFinished(event -> {
                     clear_output.setDisable(false);
+                    reset_graph.setDisable(false);
                 });
                 mainAnimation.play();
             }

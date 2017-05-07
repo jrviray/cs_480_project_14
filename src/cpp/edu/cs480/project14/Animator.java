@@ -896,9 +896,14 @@ public class Animator {
         }
     }
 
-    private void outputControl_totalCost(double cost)
+    public void resetGraph()
     {
-        outputLabel.setText("Total cost is: "+cost);
+        cancelSelection();
+        canvas.getChildren().clear();
+        vertexTable = new Vertex[2];
+        edgeTable = new Edge[2][2];
+        isDirected = null;
+
     }
 
     private double[][] writeToArrayGraph()

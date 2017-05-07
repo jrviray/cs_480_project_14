@@ -18,7 +18,6 @@ import javafx.scene.shape.Circle;
 import javafx.scene.shape.StrokeType;
 import javafx.util.Duration;
 import javafx.util.Pair;
-import cpp.edu.cs480.project14.Backend.driver;
 import java.io.*;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -658,7 +657,8 @@ public class Animator {
                 }
                 else
                 {
-                    return highlightResult(driver.sptWork(FILE_NAME,sourceChoice));
+                    //return highlightResult(driver.sptWork(FILE_NAME,sourceChoice));
+                    return null;
                 }
 
                 case Controller.MINIMUM_SPANNING_TREE:

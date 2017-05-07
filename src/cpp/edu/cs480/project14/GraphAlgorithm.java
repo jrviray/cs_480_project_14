@@ -49,41 +49,55 @@ public class GraphAlgorithm {
 
     }
     
-    public static ArrayList<Integer> Dijkstras(double[][] graph, int source) {
+    public static ArrayList<Integer> Dijkstras(double[][] graph, int source, int goal) {
+        ArrayList<Integer> prev = new ArrayList<>(graph.length);
         double[] dist = new double[graph.length];
-        ArrayList<Integer> pred = new ArrayList<>(graph.length);
         boolean[] visited = new boolean[graph.length];
-        
-        for(int i = 0; i < dist.length; i++) {
+        for (int i = 0; i < graph.length; i++) {
             dist[i] = Double.MAX_VALUE;
-            pred.add(-1);
+            prev.add(-1);
+            visited[i] = false;            
         }
         dist[source] = 0;
-        
-        
-        for(int i = 0; i < dist.length; i++) {
-            int next = minVertex(dist, visited);
-            if(next == -1) {
+        while(!areAllTrue(visited)) {
+            int u = minVertex(dist, visited);
+            if(u == goal || u == -1) {
                 break;
-            } else {
-                visited[next] = true;
             }
-            
-            
-            ArrayList<Integer> n = findNeighbors(graph, next);
-            for(int j = 0; j < n.size(); j++) {
-                int v = n.get(j);
-                double d = dist[next] + graph[next][v];
-                if(dist[v] > d) {
-                    dist[v] = d;
-                    pred.set(v, next);
+            visited[u] = true;
+            ArrayList<Integer> neighbors = findNeighbors(graph, u);
+            for (int v : neighbors) {
+                if(graph[u][v] == Double.MAX_VALUE) {
                 }
+                else {
+                    double alt = dist[u] + graph[u][v]; 
+                    if(alt < dist[v]) {
+                        dist[v] = alt;
+                        prev.set(v, u);
+                    }
+                }
+                
+            }
+          
+        }
+        ArrayList<Integer> ret = new ArrayList<Integer>();
+        return printPath(prev, ret, goal);
+    }
+    private static ArrayList<Integer> printPath(ArrayList<Integer> parent, ArrayList<Integer> output, int j) {
+        if(parent.get(j) != -1) {
+            printPath(parent, output, parent.get(j));
+            output.add(j);
+        }
+        return output;
+    }
+        private static boolean areAllTrue(boolean[] a) {
+        for(boolean b: a) {
+            if(!b) {
+                return false;
             }
         }
-        System.out.println(pred);
-        return pred;
+        return true;
     }
-    
     private static int minVertex(double[] dist, boolean[] v) {
         double x = Double.MAX_VALUE;
         int y = -1;

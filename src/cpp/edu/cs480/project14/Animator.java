@@ -657,8 +657,7 @@ public class Animator {
                 }
                 else
                 {
-                    //return highlightResult(driver.sptWork(FILE_NAME,sourceChoice));
-                    return null;
+                    return highlightResult(GraphAlgorithm.GreedyNonOptimal(writeToArrayGraph(), sourceChoice, destChoice));
                 }
 
                 case Controller.MINIMUM_SPANNING_TREE:

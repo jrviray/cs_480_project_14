@@ -46,7 +46,26 @@ public class GraphAlgorithm {
 
 
     }
-    
+    public static ArrayList<Integer> GreedyNonOptimal(double[][] graph, int source, int goal) {
+        ArrayList<Integer> ret = new ArrayList<>(graph.length);
+        int temp = source;
+        while(temp != goal){
+            ArrayList<Integer> neighbors = findNeighbors(graph, temp);
+            int u = minVertex(neighbors);
+            ret.add(u);
+            temp = u;
+        }
+        return ret;
+    }
+    public static int minVertex(ArrayList<Integer> a) {
+        int low = Integer.MAX_VALUE;
+        for(int b : a) {
+            if(low > b) {
+                low = b;
+            }
+        }
+        return low;
+    }
     public static ArrayList<Integer> Dijkstras(double[][] graph, int source, int goal) throws IllegalArgumentException {
         ArrayList<Integer> prev = new ArrayList<>(graph.length);
         double[] dist = new double[graph.length];

@@ -80,7 +80,8 @@ public class GraphAlgorithm {
         }
         return low;
     }
-    public static ArrayList<Integer> Dijkstras(double[][] graph, int source, int goal) throws IllegalArgumentException {
+    //finds shortest path from goal node to every single other node, returns the distances to that array
+    public static double[] DijkstrasDistance(double[][] graph, int source) throws IllegalArgumentException {
         ArrayList<Integer> prev = new ArrayList<>(graph.length);
         double[] dist = new double[graph.length];
         boolean[] visited = new boolean[graph.length];
@@ -92,7 +93,39 @@ public class GraphAlgorithm {
         dist[source] = 0;
         while(!areAllTrue(visited)) {
             int u = minVertex(dist, visited);
-            if(u == goal || u == -1) {
+            if(u == -1) {
+                break;
+            }
+            visited[u] = true;
+            ArrayList<Integer> neighbors = findNeighbors(graph, u);
+            for (int v : neighbors) {
+                if(graph[u][v] == Double.MAX_VALUE) {
+                }
+                else {
+                    double alt = dist[u] + graph[u][v]; 
+                    if(alt < dist[v]) {
+                        dist[v] = alt;
+                        prev.set(v, u);
+                    }
+                }
+            }
+        }
+        return dist;
+    }
+    //returns previous node array, to find shortest path from every node to previous
+    public static ArrayList<Integer> Dijkstras(double[][] graph, int source) throws IllegalArgumentException {
+        ArrayList<Integer> prev = new ArrayList<>(graph.length);
+        double[] dist = new double[graph.length];
+        boolean[] visited = new boolean[graph.length];
+        for (int i = 0; i < graph.length; i++) {
+            dist[i] = Double.MAX_VALUE;
+            prev.add(-1);
+            visited[i] = false;            
+        }
+        dist[source] = 0;
+        while(!areAllTrue(visited)) {
+            int u = minVertex(dist, visited);
+            if(u == -1) {
                 break;
             }
             visited[u] = true;
@@ -109,16 +142,8 @@ public class GraphAlgorithm {
                 }
                 
             }
-          
         }
-        ArrayList<Integer> ret = new ArrayList<Integer>();
-        ret = printPath(prev, ret, goal);
-        if(ret.size() == 0) {
-            throw new IllegalArgumentException("No path found");
-        }
-        else {
-            return ret;
-        }
+        return prev;
     }
     private static ArrayList<Integer> printPath(ArrayList<Integer> parent, ArrayList<Integer> output, int j) {
         if(parent.get(j) != -1) {
@@ -127,7 +152,15 @@ public class GraphAlgorithm {
         }
         return output;
     }
-        private static boolean areAllTrue(boolean[] a) {
+    public static ArrayList<Integer> printPath(ArrayList<Integer> parent, int j) throws IllegalArgumentException{
+        ArrayList ret = new ArrayList<Integer>();
+        ret = printPath(parent, ret, j);
+        if(ret.size() == 0) {
+            throw new IllegalArgumentException("No path found");
+        }
+        return ret;
+    }
+    private static boolean areAllTrue(boolean[] a) {
         for(boolean b: a) {
             if(!b) {
                 return false;

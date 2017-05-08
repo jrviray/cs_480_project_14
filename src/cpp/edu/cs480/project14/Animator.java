@@ -639,7 +639,11 @@ public class Animator {
                 else
                 {
                     try{
-                        return highlightResult(GraphAlgorithm.Dijkstras(writeToArrayGraph(), sourceChoice, destChoice));
+                        //diplay table results
+                        double[] distances = GraphAlgorithm.DijkstrasDistance(writeToArrayGraph(), sourceChoice);
+                        //displayTable(distances);
+                        //ArrayList<Integer> previous = GraphAlgorithm.Dijkstras(writeToArrayGraph(), sourceChoice);
+                        return highlightResult(GraphAlgorithm.printPath(GraphAlgorithm.Dijkstras(writeToArrayGraph(), sourceChoice), destChoice));
                     } catch(IllegalArgumentException e)
                     {
                         cancelSelection();

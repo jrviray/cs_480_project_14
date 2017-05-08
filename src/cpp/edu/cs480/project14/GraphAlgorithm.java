@@ -4,23 +4,24 @@ import javafx.util.Pair;
 import java.util.ArrayList;
 import java.util.LinkedList;
 
+import static sun.jvm.hotspot.oops.CellTypeState.top;
+
 /**
  * Created by wxy03 on 5/5/2017.
  */
 public class GraphAlgorithm {
 
-    public static ArrayList<Integer> BFS(double[][] graph,int source)
-    {
+    public static ArrayList<Integer> BFS(double[][] graph, int source) {
         int size = graph.length;
         boolean[] visited = new boolean[size];
 
         LinkedList<Integer> queue = new LinkedList<>();
-        ArrayList<Integer>  path = new ArrayList<>();
+        ArrayList<Integer> path = new ArrayList<>();
 
         visited[source] = true;
         queue.add(source);
 
-        while(queue.size()!=0) {
+        while (queue.size() != 0) {
             source = queue.poll();
             path.add(source);
             for (int i = 0; i < size; i++) {
@@ -34,35 +35,50 @@ public class GraphAlgorithm {
         return path;
     }
 
-    public static ArrayList<Integer> DFS(double[][] graph,int source)
-    {
+    public static ArrayList<Integer> DFS(double[][] graph, int source) {
         int size = graph.length;
         boolean[] visited = new boolean[size];
 
         ArrayList<Integer> path = new ArrayList<>();
-        visited[source]= true;
-        DFSUtil(source,visited,graph,path);
+        visited[source] = true;
+        DFSUtil(source, visited, graph, path);
         return path;
 
 
     }
+
     public static ArrayList<Integer> GreedyNonOptimal(double[][] graph, int source, int goal) {
+        ArrayList<Integer> sinks = new ArrayList<>();
+        for(int i = 0; i < graph.length; i++){
+            ArrayList<Integer> list = findNeighbors(graph,i);
+            if(list.size() == 0){
+                sinks.add(i);
+            }
+        }
+
         ArrayList<Integer> ret = new ArrayList<>(graph.length);
         int temp = source;
         while(temp != goal){
             ArrayList<Integer> neighbors = findNeighbors(graph, temp);
+            for(int i:neighbors){
+                for (int j:sinks){
+                    if(i == j){
+                        neighbors.remove(neighbors.indexOf(i));
+                    }
+                }
+            }
             int u = minVertex(neighbors, graph, temp, goal);
             if(u == -1) {
                 throw new IllegalArgumentException("No path found");
             }
             else {
                 ret.add(u);
-                
             }
             temp = u;
         }
-        return ret;
+         return ret;
     }
+
     //returns integer ID of next lowest weighted neighbor, regardless if it can reach the goal.
     //if neighbor contains goal, it returns goal.
     public static int minVertex(ArrayList<Integer> a, double[][] graph, int source, int goal) {

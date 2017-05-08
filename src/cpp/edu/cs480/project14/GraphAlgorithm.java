@@ -4,7 +4,6 @@ import javafx.util.Pair;
 import java.util.ArrayList;
 import java.util.LinkedList;
 
-import static sun.jvm.hotspot.oops.CellTypeState.top;
 
 /**
  * Created by wxy03 on 5/5/2017.

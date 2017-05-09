@@ -1,13 +1,12 @@
+/**
+ * Copyright System.out, LLC
+ */
 package cpp.edu.cs480.project14;
 
 import javafx.util.Pair;
 import java.util.ArrayList;
 import java.util.LinkedList;
 
-
-/**
- * Created by wxy03 on 5/5/2017.
- */
 public class GraphAlgorithm {
 
     public static ArrayList<Integer> BFS(double[][] graph, int source) {

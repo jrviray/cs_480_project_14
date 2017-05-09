@@ -1,6 +1,7 @@
-package cpp.edu.cs480.project14; /**
- * Created by wxy03 on 4/22/2017.
+/**
+ * Copyright System.out, LLC
  */
+package cpp.edu.cs480.project14;
 
 import javafx.animation.Animation;
 import javafx.animation.SequentialTransition;

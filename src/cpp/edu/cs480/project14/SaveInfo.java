@@ -1,10 +1,10 @@
+/**
+ * Copyright System.out, LLC
+ */
 package cpp.edu.cs480.project14;
 
 import java.io.Serializable;
 
-/**
- * Created by wxy03 on 4/30/2017.
- */
 public class SaveInfo implements Serializable {
 
     SerialVertex[] serialVertexTable;

@@ -1,3 +1,6 @@
+/**
+ * Copyright System.out, LLC
+ */
 package cpp.edu.cs480.project14;
 
 import javafx.beans.binding.DoubleBinding;
@@ -9,9 +12,6 @@ import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 import javafx.scene.transform.Rotate;
 
-/**
- * Created by wxy03 on 4/23/2017.
- */
 public class Edge extends Group{
 
     private Line edgeLine;

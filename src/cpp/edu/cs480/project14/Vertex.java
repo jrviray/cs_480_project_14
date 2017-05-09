@@ -1,3 +1,6 @@
+/**
+ * Copyright System.out, LLC
+ */
 package cpp.edu.cs480.project14;
 
 import javafx.beans.property.DoubleProperty;
@@ -9,9 +12,6 @@ import javafx.scene.shape.StrokeType;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 
-/**
- * Created by wxy03 on 4/23/2017.
- */
 public class Vertex extends Group{
 
     public  final static Color NORMAL_STROKE = new Color(0.0745, 0.3843, 0.8039, 1);

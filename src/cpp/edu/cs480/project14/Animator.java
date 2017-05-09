@@ -1,3 +1,6 @@
+/**
+ * Copyright System.out, LLC
+ */
 package cpp.edu.cs480.project14;
 
 import com.sun.javafx.binding.StringFormatter;
@@ -33,9 +36,6 @@ import javafx.util.Pair;
 import java.io.*;
 import java.util.*;
 
-/**
- * Created by wxy03 on 4/24/2017.
- */
 public class Animator {
 
     private final String  FILE_NAME= "graph.txt";

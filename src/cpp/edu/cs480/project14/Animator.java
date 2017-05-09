@@ -1,28 +1,37 @@
 package cpp.edu.cs480.project14;
 
+import com.sun.javafx.binding.StringFormatter;
 import javafx.animation.Animation;
 import javafx.animation.PauseTransition;
 import javafx.animation.SequentialTransition;
 import javafx.animation.TranslateTransition;
+import javafx.beans.InvalidationListener;
+import javafx.beans.property.ReadOnlyStringWrapper;
+import javafx.beans.property.SimpleDoubleProperty;
+import javafx.beans.property.SimpleStringProperty;
+import javafx.beans.value.ObservableValue;
+import javafx.collections.FXCollections;
+import javafx.collections.ListChangeListener;
+import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
+import javafx.scene.Scene;
 import javafx.scene.control.*;
-import javafx.scene.layout.HBox;
-import javafx.scene.layout.Pane;
-import javafx.scene.layout.VBox;
+import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
 import javafx.scene.shape.StrokeType;
+import javafx.scene.text.Font;
+import javafx.stage.Stage;
+import javafx.util.Callback;
 import javafx.util.Duration;
 import javafx.util.Pair;
 import java.io.*;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 /**
  * Created by wxy03 on 4/24/2017.
@@ -50,8 +59,7 @@ public class Animator {
     private int destChoice;
     
     private Boolean isDirected;
-    
-    private double[] distances;
+
 
 
     /**
@@ -115,16 +123,7 @@ public class Animator {
 
     }
     
-    public ArrayList<Double> getDistance() {
-    	ArrayList<Double> retList = new ArrayList<>();
-    	
-    	for (int i = 0; i < distances.length; i++) {
-    		retList.add(distances[i]);
-    	}
-    	
-    	return retList;
-    	
-    }
+
     
     public Vertex getVertex(int ID) {
         Vertex ret = vertexTable[ID];
@@ -395,42 +394,6 @@ public class Animator {
     }
 
 
-    /**
-     * This method should be called whenever there is a change on vertices or edges
-     */
-    protected void writeToFile()
-    {
-        try (PrintWriter writer = new PrintWriter(FILE_NAME, "UTF-8")) {
-        	
-        	
-        	writer.println(vertexCount()  + " " + edgeCount()  + " directed");
-
-            for(int i=0;i<edgeTable.length;i++)
-            {
-                for(int j=0;j<edgeTable.length;j++)
-                {
-                    if(edgeTable[i][j] !=null)
-                    {
-                        writer.println(i + " " + j + " " + getEdge(i, j).getWeight());
-                    }
-                }
-            }
-            
-            
-
-        }
-        catch (FileNotFoundException e)
-        {
-            e.printStackTrace();
-        }
-        catch (UnsupportedEncodingException e)
-        {
-            e.printStackTrace();
-        }
-        
-       
-    }
-
     private void outputControl_no_source()
     {
             outputLabel.setText("Please select a source vertex by clicking.");
@@ -463,9 +426,6 @@ public class Animator {
                 " Click a button above to do an operation.");
 
         cancelButton.setVisible(true);
-    }
-    private void outputControl_no_path() {
-        outputLabel.setText("No path was found bewteen your source node " + vertexTable[sourceChoice].getContent() + " and your destination node " + vertexTable[destChoice].getContent());
     }
 
     private void cancelSelection()
@@ -620,7 +580,6 @@ public class Animator {
 
     public Animation makeAlgorithm(int algType) throws IOException
     {
-        writeToFile();
         switch (algType)
         {
             case Controller.BREADTH_FIRST_SEARCH:
@@ -642,34 +601,15 @@ public class Animator {
             case Controller.DIJKSTRA_PATH:
                 if(sourceChoice==-1 && destChoice==-1)
                 {
-                    outputControl_no_source_dest();
-                    return null;
-                }
-                else if(destChoice==-1)
-                {
-                    outputControl_no_dest();
+                    outputControl_no_source();
                     return null;
                 }
                 else
                 {
-                    try{
-                        //diplay table results
-                        distances = GraphAlgorithm.DijkstrasDistance(writeToArrayGraph(), sourceChoice);
-                        for (int i = 0; i < distances.length; i++) {
-                        	System.out.println(distances[i]);
-                        }
-                        
-                        //displayTable(distances);
-                        //ArrayList<Integer> previous = GraphAlgorithm.Dijkstras(writeToArrayGraph(), sourceChoice);
-                        return highlightResult(GraphAlgorithm.printPath(GraphAlgorithm.Dijkstras(writeToArrayGraph(), sourceChoice), destChoice));
-                    } catch(IllegalArgumentException e)
-                    {
-                        cancelSelection();
-                        outputLabel.setText(e.getMessage());
-                        return null;
-                    }
+                    stageTable(GraphAlgorithm.DijkstrasDistance(writeToArrayGraph(),sourceChoice));
+                    return dijkstraAnimation(GraphAlgorithm.Dijkstras(writeToArrayGraph(),sourceChoice));
+
                 }
-                
 
             case Controller.GREEDY_SHORTEST_PATH:
                 if(sourceChoice==-1)
@@ -685,7 +625,7 @@ public class Animator {
 
                 else{
                     try{
-                        return highlightResult(GraphAlgorithm.GreedyNonOptimal(writeToArrayGraph(), sourceChoice, destChoice));
+                        return greedyAnimation(GraphAlgorithm.GreedyNonOptimal(writeToArrayGraph(), sourceChoice, destChoice));
                     } catch(IllegalArgumentException e) {
                         cancelSelection();
                         outputLabel.setText(e.getMessage());
@@ -696,7 +636,7 @@ public class Animator {
 
             case Controller.MINIMUM_SPANNING_TREE:
                     try {
-                        return highlightResult(GraphAlgorithm.MST_undirected(writeToArrayGraph()));
+                        return MSTAnimation(GraphAlgorithm.MST_undirected(writeToArrayGraph()));
                     }catch (IllegalArgumentException e)
                     {
                         cancelSelection();
@@ -868,7 +808,7 @@ public class Animator {
         }
     }
 
-    private PauseTransition highlightResult(Pair<Integer,Integer>[] path)
+    private PauseTransition MSTAnimation(Pair<Integer,Integer>[] path)
     {
 
         cancelSelection();
@@ -890,7 +830,7 @@ public class Animator {
         }
     }
 
-    private PauseTransition highlightResult(ArrayList<Integer> path)
+    private PauseTransition greedyAnimation(ArrayList<Integer> path)
     {
 
 
@@ -943,5 +883,74 @@ public class Animator {
             }
         }
         return newTable;
+    }
+
+    private PauseTransition dijkstraAnimation(ArrayList<Integer> path)
+    {
+        cancelSelection();
+
+            PauseTransition mainAnimation = new PauseTransition(Duration.ONE);
+            for (int destID = 0;destID<path.size();destID++) {
+                if (path.get(destID) != -1) {
+
+                    int sourceID = path.get(destID);
+                    getEdge(sourceID, destID).highLightEdge();
+                    getEdge(sourceID, destID).toFront();
+                    getVertex(sourceID).highLightCircle();
+                    getVertex(destID).highLightCircle();
+                }
+            }
+            return mainAnimation;
+
+    }
+
+    private void stageTable( double[] distanceList) {
+
+
+        ObservableList<Pair<String,String>> distanceData = FXCollections.observableArrayList();
+
+        for(int i=0;i<distanceList.length;i++)
+        {
+            String double_format;
+            double value=distanceList[i];
+            if(value == Double.MAX_VALUE)
+                double_format = "No Path";
+            else if(value==0)
+                double_format = "source";
+            else if(value == (long)value)
+                double_format = String.format("%d",(long)value);
+            else
+                double_format = String.format("%f",value);
+            Pair<String,String> this_entry = new Pair<>(getVertex(i).getContent(),double_format);
+            distanceData.add(this_entry);
+        }
+        Stage outTable = new Stage();
+        outTable.setWidth(300);
+        outTable.setHeight(500);
+
+        //construct the table
+        TableView table = new TableView<>();
+
+        outTable.setTitle("Dijkstra's Path Table");
+        table.setEditable(false);
+
+        TableColumn destCol = new TableColumn("Destination");
+        destCol.setCellValueFactory(new PropertyValueFactory<Pair<SimpleStringProperty,SimpleStringProperty>, String>("key"));
+        TableColumn distCol = new TableColumn("Distance");
+
+        table.getColumns().addAll(destCol,distCol);
+        distCol.setCellValueFactory(new PropertyValueFactory<Pair<SimpleStringProperty,SimpleStringProperty>, String>("value"));
+
+       table.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
+       table.setItems(distanceData);
+
+        StackPane pane = new StackPane(table);
+        Scene scene = new Scene(pane);
+
+
+
+        outTable.setScene(scene);
+        outTable.show();
+
     }
 }

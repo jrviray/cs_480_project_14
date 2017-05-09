@@ -428,6 +428,11 @@ public class Animator {
         cancelButton.setVisible(true);
     }
 
+    private void outputControl_only_select_dest()
+    {
+        outputLabel.setText("please only se");
+    }
+
     private void cancelSelection()
     {
         outputLabel.setText("");
@@ -839,15 +844,12 @@ public class Animator {
             return null;
         }
         else {
-            getEdge(sourceChoice,path.get(0)).highLightEdge();
-            getEdge(sourceChoice,path.get(0)).toFront();
-            Vertex sourceVertex=getVertex(sourceChoice);
+
             PauseTransition mainAnimation = new PauseTransition(Duration.ONE);
             cancelSelection();
-            sourceVertex.highLightCircle();
-            for (int i = -1; i < path.size() - 1; i++) {
+            for (int i = 0; i < path.size() - 1; i++) {
 
-                int sourceID = i==-1?sourceVertex.getID():path.get(i);
+                int sourceID = path.get(i);
                 int destID = path.get(i+1);
                 getEdge(sourceID, destID).highLightEdge();
                 getEdge(sourceID, destID).toFront();

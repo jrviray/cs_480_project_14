@@ -101,7 +101,7 @@ public class Controller extends Application {
         operate = new Button("operate algorithm");
         operate.setOnMouseClicked(
                 event -> {doAlgorithm();});
-        leftPane.getChildren().addAll(addVertex,deleteVertex,addEdge,deleteEdge,algChoice,operate,clear_output,reset_graph);
+        leftPane.getChildren().addAll(addVertex,deleteVertex,addEdge,deleteEdge,algChoice,operate,clear_output);
         
 
 
@@ -111,8 +111,8 @@ public class Controller extends Application {
         save = new Button("save");
         save.setOnMouseClicked(event -> {animator.saveGraph();});
         load = new Button("load");
-        load.setOnMouseClicked(event -> {animator.loadGraph();clear_output.setDisable(true);});
-        rightPane.getChildren().addAll(save,load);
+        load.setOnMouseClicked(event -> {animator.loadGraph();});
+        rightPane.getChildren().addAll(reset_graph,save,load);
 
         HBox outputBox = new HBox();
         outputBox.setPadding(new Insets(0,0,5f,20f));

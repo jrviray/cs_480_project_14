@@ -47,47 +47,72 @@ public class GraphAlgorithm {
     }
 
     public static ArrayList<Integer> GreedyNonOptimal(double[][] graph, int source, int goal) {
-        ArrayList<Integer> sinks = new ArrayList<>();
-        for(int i = 0; i < graph.length; i++){
-            ArrayList<Integer> list = findNeighbors(graph,i);
-            if(list.size() == 0 && i != goal){
-                sinks.add(i);
-            }
-        }
-        boolean [] visited = new boolean[graph.length];
-        for(int i =0; i < graph.length; i++)
-            visited[i] = false;
 
-        ArrayList<Integer> ret = new ArrayList<>(graph.length);
-        int temp = source;
-        while(temp != goal){
-            ArrayList<Integer> neighbors = findNeighbors(graph, temp);
-            int u = minVertex(neighbors, graph, temp, goal);
-            if(u == -1) {
-                throw new IllegalArgumentException("No path found");
-            }
-            else {
-                if(visited[u] == false)
-                ret.add(u);
-                else
-                    visited[u] = true;
-            }
-            temp = u;
+        ArrayList<Integer> BFS = BFS(graph,source);
+        boolean accessible = false;
+        for(int i=0;i<BFS.size();i++)
+        {
+            if(BFS.get(i)==goal)
+                accessible=true;
         }
-         return ret;
+        if(!accessible)
+            throw new IllegalArgumentException("No path found");
+        else
+        {
+            boolean [] visited = new boolean[graph.length];
+            for(int i =0; i < graph.length; i++) {
+                visited[i] = false;
+            }
+            ArrayList<Integer> ret = new ArrayList<>(graph.length);
+            int temp = source;
+            ret.add(temp);
+
+            while(temp != goal){
+                ArrayList<Integer> neighbors = findUnvisitedNeighbors(graph,visited,temp);
+                int u = minVertex(neighbors, graph, temp);
+
+                if(u == -1) {
+                    temp=ret.get(ret.size()-2);
+                    ret.remove(ret.size()-1);
+                }
+                else {
+                        ret.add(u);
+                        visited[u] = true;
+                    temp = u;
+                }
+
+            }
+            return ret;
+        }
+
     }
 
+    private static ArrayList<Integer> findUnvisitedNeighbors(double[][] graph,boolean[] visited,int source)
+    {
+        ArrayList<Integer> neighbor = new ArrayList<>();
+        for(int i = 0;i< graph.length;i++)
+        {
+            if(graph[source][i]!=Double.MAX_VALUE && visited[i]==false)
+            {
+                neighbor.add(i);
+            }
+        }
+        return neighbor;
+    }
+
+
+
+
+
+
+
+
     //returns integer ID of next lowest weighted neighbor, regardless if it can reach the goal.
-    //if neighbor contains goal, it returns goal.
-    public static int minVertex(ArrayList<Integer> a, double[][] graph, int source, int goal) {
+    public static int minVertex(ArrayList<Integer> a, double[][] graph, int source) {
         int low = -1;
         double y = Integer.MAX_VALUE;
         for(int b : a) {
-            if(b == goal) {
-                low = b;
-                break;
-            }
-            else if(graph[source][b] < y) {
+            if(graph[source][b] < y) {
                 low = b;
                 y = graph[source][b];
             }

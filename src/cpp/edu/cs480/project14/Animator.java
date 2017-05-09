@@ -50,6 +50,8 @@ public class Animator {
     private int destChoice;
     
     private Boolean isDirected;
+    
+    private double[] distances;
 
 
     /**
@@ -112,6 +114,18 @@ public class Animator {
         }
 
     }
+    
+    public ArrayList<Double> getDistance() {
+    	ArrayList<Double> retList = new ArrayList<>();
+    	
+    	for (int i = 0; i < distances.length; i++) {
+    		retList.add(distances[i]);
+    	}
+    	
+    	return retList;
+    	
+    }
+    
     public Vertex getVertex(int ID) {
         Vertex ret = vertexTable[ID];
         return ret;
@@ -640,7 +654,11 @@ public class Animator {
                 {
                     try{
                         //diplay table results
-                        double[] distances = GraphAlgorithm.DijkstrasDistance(writeToArrayGraph(), sourceChoice);
+                        distances = GraphAlgorithm.DijkstrasDistance(writeToArrayGraph(), sourceChoice);
+                        for (int i = 0; i < distances.length; i++) {
+                        	System.out.println(distances[i]);
+                        }
+                        
                         //displayTable(distances);
                         //ArrayList<Integer> previous = GraphAlgorithm.Dijkstras(writeToArrayGraph(), sourceChoice);
                         return highlightResult(GraphAlgorithm.printPath(GraphAlgorithm.Dijkstras(writeToArrayGraph(), sourceChoice), destChoice));

@@ -45,6 +45,7 @@ public class Vertex extends Group{
         text.setFill(NORMAL_STROKE);
         getChildren().addAll(circle,text);
     }
+    
 
     public DoubleProperty getXProperty() { return circle.translateXProperty(); }
     public DoubleProperty getYProperty() { return circle.translateYProperty(); }

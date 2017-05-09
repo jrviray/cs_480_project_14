@@ -5,15 +5,21 @@ package cpp.edu.cs480.project14; /**
 import javafx.animation.Animation;
 import javafx.animation.SequentialTransition;
 import javafx.application.Application;
+import javafx.beans.property.ReadOnlyStringWrapper;
 import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
+import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.*;
+import javafx.scene.text.Font;
 import javafx.stage.Stage;
 
 import java.io.IOException;
+import java.util.Arrays;
+import java.util.List;
 
 public class Controller extends Application {
 
@@ -121,13 +127,81 @@ public class Controller extends Application {
         BorderPane.setAlignment(copyrightLabel,Pos.CENTER_RIGHT);
 
         animator = new Animator(canvas,outputBox);
+       
 
 
+    }
+    
+    
+    
+    private void stageTable() {
+    	ObservableList<Double> djk = FXCollections.observableList(animator.getDistance());
+    	TableView<Integer> table = new TableView<>();
+    	
+    	for (int i = 0; i < djk.size(); i++) {
+    		table.getItems().add(i);
+    	}
+    	
+    	Stage outTable = new Stage();
+    	outTable.setWidth(300);
+    	outTable.setHeight(500);
+    	outTable.setTitle("Dijkstra's Path Table");
+    	Label label = new Label();
+    	label.setFont(new Font("Arial", 20));
+    	
+    	
+    	
+    	
+    	TableColumn<Integer, String> destCol = new TableColumn<>("Destination");
+    	TableColumn<Integer, String> distCol = new TableColumn<>("Distance");
+    	
+    	destCol.setCellValueFactory(cellData -> {
+    		Integer rowIndex = cellData.getValue();
+    		return new ReadOnlyStringWrapper(animator.getVertex(rowIndex).getContent());
+    	});
+    	
+    	distCol.setCellValueFactory(cellData -> {
+    		Integer rowIndex = cellData.getValue();
+    		return new ReadOnlyStringWrapper(animator.getDistance().get(rowIndex).toString());
+    	});
+    	
+    	
+    	
+    	
+    	table.getColumns().addAll(destCol);
+    	table.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
+    	
+    	
+    	
+    	
+    	VBox vbox = new VBox();
+    	vbox.setSpacing(5);
+    	vbox.setPadding(new Insets(10,10, 10, 10));
+    	vbox.getChildren().addAll(label, table);
+    	
+    	
+    	
+    	
+    	
+    	
+    	FlowPane root = new FlowPane();
+    	root.setAlignment(Pos.CENTER_RIGHT);
+    	Scene scene = new Scene(vbox, 400, 600);
+    	
+    	
+    	
+    	outTable.setScene(scene);
+    	outTable.show();
+    	
     }
 
     private void doAlgorithm()
     {
         try {
+        	
+        	if (algorithmType == 4) {
+        		stageTable();
+        	}
 
             Animation mainAnimation = animator.makeAlgorithm(algorithmType);
             if(mainAnimation!=null) {

@@ -54,24 +54,23 @@ public class GraphAlgorithm {
                 sinks.add(i);
             }
         }
+        boolean [] visited = new boolean[graph.length];
+        for(int i =0; i < graph.length; i++)
+            visited[i] = false;
 
         ArrayList<Integer> ret = new ArrayList<>(graph.length);
         int temp = source;
         while(temp != goal){
             ArrayList<Integer> neighbors = findNeighbors(graph, temp);
-            for(int i:neighbors){
-                for (int j:sinks){
-                    if(i == j){
-                        neighbors.remove(neighbors.indexOf(i));
-                    }
-                }
-            }
             int u = minVertex(neighbors, graph, temp, goal);
             if(u == -1) {
                 throw new IllegalArgumentException("No path found");
             }
             else {
+                if(visited[u] == false)
                 ret.add(u);
+                else
+                    visited[u] = true;
             }
             temp = u;
         }

@@ -65,6 +65,7 @@ public class GraphAlgorithm {
             }
             ArrayList<Integer> ret = new ArrayList<>(graph.length);
             int temp = source;
+            visited[temp]=true;
             ret.add(temp);
 
             while(temp != goal){

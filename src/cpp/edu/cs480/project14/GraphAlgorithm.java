@@ -50,7 +50,7 @@ public class GraphAlgorithm {
         ArrayList<Integer> sinks = new ArrayList<>();
         for(int i = 0; i < graph.length; i++){
             ArrayList<Integer> list = findNeighbors(graph,i);
-            if(list.size() == 0){
+            if(list.size() == 0 && i != goal){
                 sinks.add(i);
             }
         }
